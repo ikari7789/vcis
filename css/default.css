@@ -1,0 +1,96 @@
+* {
+	font-family: Corbel, Arial;
+	font-size: 16px;
+}
+
+#page {
+	margin: 10px auto 0;
+	width: 800px;
+}
+
+header {
+	height: 100px;
+}
+
+#logo {
+	float: left;
+}
+
+#logo img {
+	border: none;
+}
+
+#header-content {
+	float: right;
+}
+
+#search {
+	margin-top: 15px;
+	display: block;
+}
+
+#main-nav {
+	position: relative;
+	right: -30px;
+	line-height: 16px;
+	list-style: none;
+}
+
+#main-nav li.first {
+	border-left: none;
+}
+
+#main-nav li {
+	border-left: 1px solid black;
+	position: relative;
+	top: -15px;
+	float: left;
+	padding: 0 5px;
+	margin: 5px 0;
+}
+
+#main-nav li a {
+	font-size: 14px;
+}
+
+.breadcrumbs {
+	clear: both;
+}
+.breadcrumbs, .breadcrumbs a, .breadcrumbs span {
+	font-size: 12px;
+}
+
+.row {
+	margin: 5px 0;
+}
+.row label {
+	display: inline-block;
+	width: 150px;
+}
+
+.errorMessage {
+	font-size: 10px;
+	color: red;
+}
+div.images img {
+	border: 2px solid black;
+	/*width: 425px;
+	height: 318px;*/
+}
+ul.room-details li {
+	list-style: none;
+	border-bottom: 1px solid black;
+}
+ul.room-details li span.feature {
+	display: inline-block;
+	width: 200px;
+}
+ul.room-details li span.details {
+	display: inline-block;
+	width: 200px;
+}
+ul.room-details li span.verified {
+	color: green;
+	font-size: 10px;
+	display: inline-block;
+}
