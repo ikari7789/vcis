@@ -1,6 +1,7 @@
 <?php
+$this->pageTitle=$model->name.' | '.Yii::app()->name;
+
 $this->breadcrumbs=array(
-	'Buildings'=>array('index'),
 	$model->name,
 );
 
@@ -13,24 +14,69 @@ $this->breadcrumbs=array(
 );*/
 ?>
 
-<h1>View Building #<?php echo $model->name; ?></h1>
+<?php Yii::app()->clientScript->registerScript('imageHover',"
+	
+	$(window).bind('load', function(){
+		".$floorImageJs.$roomImageJs."
+	});
+	
+	$(document).ready(function() {
+		
+		$('select#floors').on('change', function() {
+			$('ul.rooms').html('');
+			$('.map-images img').each(function() {
+				if ($(this).hasClass('display'))
+					$(this).removeClass('display');
+			});
+			$('#floor_'+$(this).val()+'_map').addClass('display');
+			$.ajax({
+				type: 'POST',
+				url: '".CController::createUrl('floor/ajaxRooms')."',
+				data: $(this).serialize(),
+				success: function(data) {
+					$(data).find('li').each(function() {
+						$(this).appendTo('ul.rooms');
+					});
+					$(data).find('img').each(function() {
+						if(!$('#'+this.id).length > 0) {
+							$('.map-images').prepend($(this));
+						}
+					})
+				}
+			});
+		});
+		
+		var \$currentImage;
+		
+		// hover code for rooms
+		$('a.room').live({
+			mouseenter: function() {
+				$('.map-images img').each(function() {
+					if ($(this).hasClass('display')) {
+						\$currentImage = $(this);
+						$(this).removeClass('display');
+					}
+				});
+				$('#'+$(this).attr('id')+'_map').addClass('display');
+			},
+			mouseleave: function() {
+				\$currentImage.addClass('display');
+				$('#'+$(this).attr('id')+'_map').removeClass('display');
+			}
+		});
+	});
+"); ?>
 
-<?php /* $this->widget('zii.widgets.CDetailView', array(
-	'data'=>$model,
-	'attributes'=>array(
-		//'id',
-		'name',
-		'map_image',
-		'create_time',
-		'update_time',
-	),
-)); */ ?>
-
-<?php foreach ($model->floors as $floor) { ?>
-	<h2>Floor <?php echo $floor->level; ?></h2>
-	<ul>
-	<?php foreach ($floor->rooms as $room) {
-		echo '<li>'.CHtml::link($room->number, array('room/view', 'id'=>$room->id))."</li>\n";
-	} ?>
+<h1><?php echo $model->name; ?></h1>
+<div class="leftcol">
+	<?php echo CHtml::dropDownList('floors', '', $floors, array('id'=>'floors',)); ?>
+	<ul class="rooms">
+		<?php foreach ($rooms as $room): ?>
+			<li><?php echo CHtml::link($room->number, array('room/view', 'id'=>$room->id), array('id'=>'room_'.$room->id,'class'=>'room')); ?></li>
+		<?php endforeach; ?>
 	</ul>
-<?php } ?>
+</div>
+<div class="rightcol">
+	<div class="map-images">
+	</div>
+</div>

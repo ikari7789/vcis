@@ -24,7 +24,7 @@
 		<?php
 			$baseDir = Yii::getPathOfAlias('siteDir');
 			$uploadDir = $baseDir.'/images/buildings/';
-			if (file_exists($uploadDir.$model->map_image))
+			if ($model->map_image != '' && file_exists($uploadDir.$model->map_image))
 				echo CHtml::image(Yii::app()->request->baseUrl.'/images/buildings/'.$model->map_image);
 		?>
 		<?php echo $form->fileField($model,'map_image',array('size'=>60,'maxlength'=>255)); ?>
@@ -63,9 +63,9 @@
 		?>
 		<div class="row">
 			<?php 
-			if (isset($floors[$floor])) {
-				?> <label for="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">Floor <?php echo $floors[$floor]->level; ?> image</label> <?php
-				if (file_exists($uploadDir.$model->id.'_'.$floors[$floor]->id.'_map.jpg'))
+			if (isset($floors[$floor])) {?>
+				<label for="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">Floor <?php echo $floors[$floor]->level; ?> image</label> <?php
+				if (!empty($floors[$floor]->map_image) && file_exists($uploadDir.$floors[$floor]->map_image))
 					echo CHtml::image(Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image, 
 						$model->name.' - Floor '.$floors[$floor]->level)."\n"; 
 				?>

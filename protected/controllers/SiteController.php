@@ -29,9 +29,19 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$buildings = Building::model()->findAll();		
+		$buildings = Building::model()->findAll();
+		$buildingImages = array();
+		foreach ($buildings as $building)
+			$buildingImages[] = CHtml::image(
+				Yii::app()->request->baseUrl.'/images/buildings/'.$building->map_image,
+				'University of Wisconsin - Whitewater Campus Map - '.$building->name,
+				array(
+					'class'=>'building-image',
+					'id'=>'building_'.$building->id.'_map',
+				)
+			);
 		
-		$this->render('index', array('buildings'=>$buildings));
+		$this->render('index', array('buildings'=>$buildings,'buildingImages'=>$buildingImages));
 	}
 
 	/**

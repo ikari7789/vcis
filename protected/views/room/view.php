@@ -1,7 +1,7 @@
 <?php
 $this->breadcrumbs=array(
-	'Rooms'=>array('index'),
-	$model->id,
+	$model->floor->building->name=>array('building/view','id'=>$model->floor->building->id),
+	$model->number,
 );
 
 $this->menu=array(
@@ -14,22 +14,6 @@ $this->menu=array(
 ?>
 
 <h1><?php echo $model->floor->building->name.' - Floor '.$model->floor->level.' - '.$model->number; ?></h1>
-
-<?php /* $this->widget('zii.widgets.CDetailView', array(
-	'data'=>$model,
-	'attributes'=>array(
-		'id',
-		'number',
-		'front_image',
-		'back_image',
-		'map_image',
-		'status',
-		'description',
-		'floor_id',
-		'create_time',
-		'update_time',
-	),
-)); */?>
 
 <div class="images">
 	<h3>Front Image</h3>

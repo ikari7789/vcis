@@ -2,6 +2,11 @@
 	font-family: Corbel, Arial;
 	font-size: 16px;
 }
+img {
+	border: 2px solid black;
+	/*width: 425px;
+	height: 318px;*/
+}
 
 #page {
 	margin: 10px auto 0;
@@ -72,11 +77,27 @@ header {
 	font-size: 10px;
 	color: red;
 }
-div.images img {
-	border: 2px solid black;
-	/*width: 425px;
-	height: 318px;*/
+
+.building-image, .floor-image, .room-image {
+	position: absolute;
+	top:0;
+	left:0;
+	display:none;
 }
+
+.display {
+	display: block;
+}
+div.leftcol {
+	float: left;
+	width: 250px;
+}
+div.rightcol {
+	position: relative;
+	float: right;
+	width: 550px;
+}
+
 ul.room-details li {
 	list-style: none;
 	border-bottom: 1px solid black;

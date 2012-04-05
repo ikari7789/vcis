@@ -27,7 +27,7 @@ class FloorController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view', 'create', 'update', 'admin', 'delete'),
+				'actions'=>array('index','view', 'create', 'update', 'admin', 'delete','ajaxRooms'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -42,6 +42,30 @@ class FloorController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+	
+	/**
+	 * Returns a list of rooms associated with a floor
+	 */
+	public function actionAjaxRooms()
+	{
+		if (Yii::app()->request->isPostRequest) {
+			echo '<div>';
+			$model = Floor::Model()->with('rooms')->findByPk($_POST['floors'],array('order'=>'rooms.number ASC'));
+			foreach($model->rooms as $room) {
+				echo '<li>'.CHtml::link($room->number, array('room/view', 'id'=>$room->id), array('id'=>'room_'.$room->id,'class'=>'room')).'</li>';
+				echo CHtml::image(
+					Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image,
+					$model->building->name.' - Floor '.$model->level.' - '.$room->number,
+					array(
+						'class'=>'room-image',
+						'id'=>'room_'.$room->id.'_map',
+					)
+				);
+			}
+			
+			echo '</div>';
+		}
 	}
 
 	/**
