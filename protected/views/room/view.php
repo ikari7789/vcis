@@ -13,33 +13,58 @@ $this->menu=array(
 );
 ?>
 
+<?php Yii::app()->clientScript->registerScript('room',"
+	$(document).ready(function() {
+		// add to list code
+		$('button#add-list').on('click', function() {
+			$.ajax({
+				type: 'POST',
+				url: '".CController::createUrl('list/add')."',
+				data: 'room_id='+$('#room_id').val(),
+				success: function(data) {
+					alert(data);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert('Error saving to list');
+				}
+			});
+		});
+	});
+"); ?>
+
 <h1><?php echo $model->floor->building->name.' - Floor '.$model->floor->level.' - '.$model->number; ?></h1>
 
-<div class="images">
-	<h3>Front Image</h3>
-	<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image); ?>
-	
-	<h3>Back Image</h3>
-	<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image); ?>
+<div class="left-room">
+	<div class="images">
+		<h3>Front Image</h3>
+		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image); ?>
+		
+		<h3>Back Image</h3>
+		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image); ?>
+	</div>
 </div>
-<div class="details">
-	<h2>Room Features</h2>
-	<?php foreach($categories as $category) { ?>
-		<?php if (count($category->features) > 0) { ?>
-			<h3><?php echo $category->name; ?></h3>
-			<ul class="room-details">
-			<?php foreach($category->features as $feature) { ?>
-					<?php if (isset($roomFeatures[$feature->id])) { ?>
-					<li>
-						<span class="feature"><?php echo $feature->name; ?></span>
-						<span class="details"><?php echo $roomFeatures[$feature->id]['details']; ?></span>
-						<?php if ($roomFeatures[$feature->id]['verified'] == 1) { ?>
-							<span class="verified">Verified</span>
+<div class="right-room">
+	<div class="details">
+		<h2>Room Features</h2>
+		<?php echo CHtml::hiddenField('room_id', $model->id); ?>
+		<?php foreach($categories as $category) { ?>
+			<?php if (count($category->features) > 0) { ?>
+				<h3><?php echo $category->name; ?></h3>
+				<ul class="room-details">
+				<?php foreach($category->features as $feature) { ?>
+						<?php if (isset($roomFeatures[$feature->id])) { ?>
+						<li>
+							<span class="feature"><?php echo $feature->name; ?></span>
+							<span class="details"><?php echo $roomFeatures[$feature->id]['details']; ?></span>
+							<?php if ($roomFeatures[$feature->id]['verified'] == 1) { ?>
+								<span class="verified">Verified</span>
+							<?php } ?>
+						</li>
 						<?php } ?>
-					</li>
-					<?php } ?>
+				<?php } ?>
+				</ul>
 			<?php } ?>
-			</ul>
-		<?php } ?>
-	<?php }	?>
+		<?php }	?>
+	</div>
+	<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
 </div>

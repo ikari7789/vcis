@@ -24,12 +24,15 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'mcssad2',
 		 	// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1','66.189.142.10','140.146.217.56','140.146.228.179','140.146.235.46'),
+			'ipFilters'=>array('127.0.0.1','::1','66.189.142.10','140.146.217.56','140.146.228.179','140.146.235.46','140.146.236.119'),
 		),
 	),
 
 	// application components
 	'components'=>array(
+		'session'=>array(
+			'autoStart'=>true,
+		),
 		'simpleImage'=>array(
 			'class' => 'application.extensions.CSimpleImage',
 		),

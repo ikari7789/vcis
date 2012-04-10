@@ -35,7 +35,7 @@
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-  <div id="page">
+  <div id="page" class="clearfix">
     <header>
       <div id="logo">
         <a href="http://www.uww.edu"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/w_logo.png" alt="UW-W Home" /></a>
@@ -49,7 +49,8 @@
         <?php $this->widget('zii.widgets.CMenu', array(
           'items'=>array(
             array('label'=>'Administrative Tools', 'url'=>array('admin/index')), //, 'visible'=>!Yii::app()->user->isGuest),
-            array('label'=>'View List', 'url'=>array('site/list')),
+            array('label'=>'View List', 'url'=>array('list/index')),
+            array('label'=>'Help', 'url'=>array('site/page', 'view'=>'help')),
             array('label'=>'Logout', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest),
           ),
           'firstItemCssClass'=>'first',
@@ -63,7 +64,7 @@
         )); ?><!-- breadcrumbs -->
       <?php endif ?>
     </header>
-    <div role="main">
+    <div role="main" class="clearfix">
       <?php echo $content; ?>
     </div>
     <footer>

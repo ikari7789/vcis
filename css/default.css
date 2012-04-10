@@ -9,7 +9,7 @@ img {
 }
 
 #page {
-	margin: 10px auto 0;
+	margin: 10px auto;
 	width: 800px;
 }
 
@@ -96,6 +96,14 @@ div.rightcol {
 	position: relative;
 	float: right;
 	width: 550px;
+}
+div.left-room {
+	float: left;
+	width: 450px;
+}
+div.right-room {
+	float: right;
+	width: 350px;
 }
 
 ul.room-details li {
