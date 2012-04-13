@@ -63,7 +63,16 @@ class ListController extends Controller
 	{
 		if (Yii::app()->request->isPostRequest)
 		{
-			
+			if (isset($_POST['room_id']))
+			{
+				$session = Yii::app()->session;
+				unset($session['list']);
+				$session['list']=new RoomList;
+				foreach($_POST['room_id'] as $pos => $id)
+				{
+					$session['list']->addRoom($id);
+				}
+			}
 		}
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
@@ -71,7 +80,12 @@ class ListController extends Controller
 	
 	public function actionClear()
 	{
-		unset(Yii::app()->session['list']);
+		if (Yii::app()->request->isPostRequest)
+		{
+			unset(Yii::app()->session['list']);
+		}
+		else
+			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
 	// Uncomment the following methods and override them if needed

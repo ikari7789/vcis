@@ -8,9 +8,15 @@
  * @property string $name
  * @property string $description
  * @property integer $category_id
+ * @property string $create_time
+ * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  *
  * The followings are the available model relations:
  * @property Category $category
+ * @property User $createUser
+ * @property User $updateUser
  * @property Room[] $rooms
  */
 class Feature extends CActiveRecord
@@ -41,13 +47,13 @@ class Feature extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, category_id', 'required'),
-			array('category_id', 'numerical', 'integerOnly'=>true),
+			array('name, category_id, create_time, create_user_id', 'required'),
+			array('category_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>45),
-			array('description', 'safe'),
+			array('description, update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, description, category_id', 'safe', 'on'=>'search'),
+			array('id, name, description, category_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,6 +66,8 @@ class Feature extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
+			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
+			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'rooms' => array(self::MANY_MANY, 'Room', 'room_feature(feature_id, room_id)'),
 		);
 	}
@@ -74,6 +82,10 @@ class Feature extends CActiveRecord
 			'name' => 'Name',
 			'description' => 'Description',
 			'category_id' => 'Category',
+			'create_time' => 'Create Time',
+			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -90,7 +102,12 @@ class Feature extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('description',$this->description,true);
 		$criteria->compare('category_id',$this->category_id);
+		$criteria->compare('create_time',$this->create_time,true);
+		$criteria->compare('update_time',$this->update_time,true);
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -10,9 +10,13 @@
  * @property integer $building_id
  * @property string $create_time
  * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  *
  * The followings are the available model relations:
  * @property Building $building
+ * @property User $createUser
+ * @property User $updateUser
  * @property Room[] $rooms
  */
 class Floor extends CActiveRecord
@@ -57,20 +61,13 @@ class Floor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('level, building_id', 'required'),
-			array('level, building_id', 'numerical', 'integerOnly'=>true, 'allowEmpty'=>true),
+			array('level, building_id, create_time, create_user_id', 'required'),
+			array('level, building_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('map_image', 'length', 'max'=>255),
-			array('map_image',
-				'file',
-				'types'=>'jpg, gif, png',
-				'allowEmpty'=>true,
-				'maxSize'=>1024 * 1024 * 10, // 10MB
-				'tooLarge'=>'The file was larger than 50MB. Please upload a smaller file.',
-			),
-			array('map_image', 'unsafe'),
+			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, level, map_image, building_id, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, level, map_image, building_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,6 +80,8 @@ class Floor extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'building' => array(self::BELONGS_TO, 'Building', 'building_id'),
+			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
+			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'rooms' => array(self::HAS_MANY, 'Room', 'floor_id'),
 		);
 	}
@@ -99,6 +98,8 @@ class Floor extends CActiveRecord
 			'building_id' => 'Building',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -119,7 +120,9 @@ class Floor extends CActiveRecord
 		$criteria->compare('building_id',$this->building_id);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
-
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

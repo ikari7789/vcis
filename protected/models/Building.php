@@ -7,10 +7,15 @@
  * @property integer $id
  * @property string $name
  * @property string $map_image
+ * @property string $street_image
  * @property string $create_time
  * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  *
  * The followings are the available model relations:
+ * @property User $createUser
+ * @property User $updateUser
  * @property Floor[] $floors
  */
 class Building extends CActiveRecord
@@ -56,20 +61,14 @@ class Building extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
+			array('name, create_time, create_user_id', 'required'),
+			array('create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>30),
-			array('map_image', 'length', 'max'=>255),
-			array('map_image',
-				'file',
-				'types'=>'jpg, gif, png',
-				'allowEmpty'=>true,
-				'maxSize'=>1024 * 1024 * 10, // 10MB
-				'tooLarge'=>'The file was larger than 50MB. Please upload a smaller file.',
-			),
-			array('map_image', 'unsafe'),
+			array('map_image, street_image', 'length', 'max'=>255),
+			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name, map_image, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, name, map_image, street_image, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -81,6 +80,8 @@ class Building extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
+			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'floors' => array(self::HAS_MANY, 'Floor', 'building_id'),
 		);
 	}
@@ -94,8 +95,11 @@ class Building extends CActiveRecord
 			'id' => 'ID',
 			'name' => 'Name',
 			'map_image' => 'Map Image',
+			'street_image' => 'Street Image',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -113,9 +117,12 @@ class Building extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('map_image',$this->map_image,true);
+		$criteria->compare('street_image',$this->street_image,true);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
-
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

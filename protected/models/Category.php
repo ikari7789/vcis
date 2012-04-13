@@ -6,8 +6,14 @@
  * The followings are the available columns in table 'category':
  * @property integer $id
  * @property string $name
+ * @property string $create_time
+ * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  *
  * The followings are the available model relations:
+ * @property User $createUser
+ * @property User $updateUser
  * @property Feature[] $features
  */
 class Category extends CActiveRecord
@@ -38,12 +44,13 @@ class Category extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
+			array('name, create_time, create_user_id', 'required'),
+			array('create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>45),
+			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, name, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,6 +62,8 @@ class Category extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
+			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'features' => array(self::HAS_MANY, 'Feature', 'category_id'),
 		);
 	}
@@ -67,6 +76,10 @@ class Category extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
+			'create_time' => 'Create Time',
+			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -83,6 +96,10 @@ class Category extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('create_time',$this->create_time,true);
+		$criteria->compare('update_time',$this->update_time,true);
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

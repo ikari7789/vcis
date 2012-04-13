@@ -7,9 +7,11 @@
  * @property integer $room_id
  * @property integer $feature_id
  * @property string $details
- * @property integer $verified
+ * @property string $verification_time
  * @property string $create_time
  * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  */
 class RoomFeature extends CActiveRecord
 {
@@ -51,12 +53,13 @@ class RoomFeature extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('room_id, feature_id, details, verified', 'required'),
-			array('room_id, feature_id, verified', 'numerical', 'integerOnly'=>true),
+			array('room_id, feature_id, details, verification_time, create_time, create_user_id', 'required'),
+			array('room_id, feature_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('details', 'length', 'max'=>45),
+			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('room_id, feature_id, details, verified, create_time, update_time', 'safe', 'on'=>'search'),
+			array('room_id, feature_id, details, verification_time, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -82,9 +85,11 @@ class RoomFeature extends CActiveRecord
 			'room_id' => 'Room',
 			'feature_id' => 'Feature',
 			'details' => 'Details',
-			'verified' => 'Verified',
+			'verification_time' => 'Verification Time',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -102,9 +107,11 @@ class RoomFeature extends CActiveRecord
 		$criteria->compare('room_id',$this->room_id);
 		$criteria->compare('feature_id',$this->feature_id);
 		$criteria->compare('details',$this->details,true);
-		$criteria->compare('verified',$this->verified);
+		$criteria->compare('verification_time',$this->verification_time,true);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

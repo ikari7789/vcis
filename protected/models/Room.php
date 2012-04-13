@@ -14,9 +14,13 @@
  * @property integer $floor_id
  * @property string $create_time
  * @property string $update_time
+ * @property integer $create_user_id
+ * @property integer $update_user_id
  *
  * The followings are the available model relations:
  * @property Floor $floor
+ * @property User $createUser
+ * @property User $updateUser
  * @property Feature[] $features
  */
 class Room extends CActiveRecord
@@ -62,22 +66,14 @@ class Room extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('number, status, floor_id', 'required'),
-			array('status, floor_id', 'numerical', 'integerOnly'=>true),
+			array('number, status, floor_id, create_time, create_user_id', 'required'),
+			array('status, floor_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
 			array('number', 'length', 'max'=>10),
-			array('front_image, back_image, map_image', 'length', 'max'=>255, 'allowEmpty'=>true),
-			array('front_image, back_image, map_image',
-				'file',
-				'types'=>'jpg, gif, png',
-				'allowEmpty'=>true,
-				'maxSize'=>1024 * 1024 * 10, // 10MB
-				'tooLarge'=>'The file was larger than 50MB. Please upload a smaller file.',
-			),
-			array('description', 'safe'),
-			//array('front_image, back_image, map_image', 'unsafe'),
+			array('front_image, back_image, map_image', 'length', 'max'=>255),
+			array('description, update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time', 'safe', 'on'=>'search'),
+			array('id, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -90,6 +86,8 @@ class Room extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'floor' => array(self::BELONGS_TO, 'Floor', 'floor_id'),
+			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
+			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'features' => array(self::MANY_MANY, 'Feature', 'room_feature(room_id, feature_id)'),
 			'room_features' => array(self::HAS_MANY, 'RoomFeature', 'room_id'),
 		);
@@ -111,6 +109,8 @@ class Room extends CActiveRecord
 			'floor_id' => 'Floor',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
+			'create_user_id' => 'Create User',
+			'update_user_id' => 'Update User',
 		);
 	}
 
@@ -125,16 +125,18 @@ class Room extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		//$criteria->compare('id',$this->id);
+		$criteria->compare('id',$this->id);
 		$criteria->compare('number',$this->number,true);
-		//$criteria->compare('front_image',$this->front_image,true);
-		//$criteria->compare('back_image',$this->back_image,true);
-		//$criteria->compare('map_image',$this->map_image,true);
+		$criteria->compare('front_image',$this->front_image,true);
+		$criteria->compare('back_image',$this->back_image,true);
+		$criteria->compare('map_image',$this->map_image,true);
 		$criteria->compare('status',$this->status);
-		//$criteria->compare('description',$this->description,true);
+		$criteria->compare('description',$this->description,true);
 		$criteria->compare('floor_id',$this->floor_id);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
+		$criteria->compare('create_user_id',$this->create_user_id);
+		$criteria->compare('update_user_id',$this->update_user_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
