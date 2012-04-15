@@ -23,44 +23,20 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password',array('size'=>32,'maxlength'=>32)); ?>
+		<?php echo $form->passwordField($model,'password',array('size'=>60,'maxlength'=>256)); ?>
 		<?php echo $form->error($model,'password'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'password_repeat'); ?>
+		<?php echo $form->passwordField($model,'password_repeat',array('size'=>60,'max_length'=>256)); ?>
+		<?php echo $form->error($model,'password_repeat'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'user_level'); ?>
 		<?php echo $form->textField($model,'user_level'); ?>
 		<?php echo $form->error($model,'user_level'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'last_login_time'); ?>
-		<?php echo $form->textField($model,'last_login_time'); ?>
-		<?php echo $form->error($model,'last_login_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'create_time'); ?>
-		<?php echo $form->textField($model,'create_time'); ?>
-		<?php echo $form->error($model,'create_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'update_time'); ?>
-		<?php echo $form->textField($model,'update_time'); ?>
-		<?php echo $form->error($model,'update_time'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'create_user_id'); ?>
-		<?php echo $form->textField($model,'create_user_id'); ?>
-		<?php echo $form->error($model,'create_user_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'update_user_id'); ?>
-		<?php echo $form->textField($model,'update_user_id'); ?>
-		<?php echo $form->error($model,'update_user_id'); ?>
 	</div>
 
 	<div class="row buttons">

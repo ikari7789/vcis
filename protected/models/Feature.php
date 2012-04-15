@@ -19,18 +19,20 @@
  * @property User $updateUser
  * @property Room[] $rooms
  */
-class Feature extends CActiveRecord
+class Feature extends ActiveRecordBase
 {
+	private $_oldValues = array();
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Feature the static model class
+	 * @return Building the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -47,10 +49,10 @@ class Feature extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, category_id, create_time, create_user_id', 'required'),
-			array('category_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
+			array('name, category_id', 'required'),
+			array('name', 'unique'),
 			array('name', 'length', 'max'=>45),
-			array('description, update_time', 'safe'),
+			array('description', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, description, category_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -112,5 +114,15 @@ class Feature extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	/**
+	 * Save current record to temp variable to be able to rollback any changes.
+	 */
+	public function afterFind()
+	{
+		$this->_oldValues = $this->attributes;
+		Yii::trace('Model backup created.','Building::afterFind');
+		return parent::afterFind();
 	}
 }

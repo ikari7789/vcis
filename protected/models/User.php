@@ -31,18 +31,21 @@
  * @property User $updateUser
  * @property User[] $users1
  */
-class User extends CActiveRecord
+class User extends ActiveRecordBase
 {
+	private $_oldValues = array();
+	public $password_repeat;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return User the static model class
+	 * @return Building the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -59,11 +62,12 @@ class User extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('email, username, password, user_level, create_time, create_user_id', 'required'),
-			array('user_level, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
-			array('email, username', 'length', 'max'=>256),
-			array('password', 'length', 'max'=>32),
-			array('last_login_time, update_time', 'safe'),
+			array('email, username, password', 'required'),
+			array('email, username', 'unique'),
+			array('password', 'compare'),
+			array('user_level', 'integerOnly'=>true),
+			array('email, username, password', 'length', 'max'=>256),
+			array('password_repeat', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, email, username, password, user_level, last_login_time, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -139,5 +143,29 @@ class User extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	/**
+	 * Save current record to temp variable to be able to rollback any changes.
+	 */
+	public function afterFind()
+	{
+		$this->_oldValues = $this->attributes;
+		Yii::trace('Model backup created.','Building::afterFind');
+		return parent::afterFind();
+	}
+	
+	/**
+	 * perform one-way encryption on the password before we store it in the database.
+	 */
+	protected function afterValidate()
+	{
+		parent::afterValidate();
+		$this->password = $this->encrypt($this->password);
+	}
+	
+	public function encrypt($value)
+	{
+		return md5($value);
 	}
 }

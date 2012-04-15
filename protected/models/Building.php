@@ -18,22 +18,9 @@
  * @property User $updateUser
  * @property Floor[] $floors
  */
-class Building extends CActiveRecord
+class Building extends ActiveRecordBase
 {
-	
 	private $_oldValues = array();
-	
-	/**
-	 * @return array behavior rules for model attributes.
-	 */
-	public function behaviors() {
-		return array(
-			'CTimestampBehavior'=>array(
-				'class'=>'zii.behaviors.CTimestampBehavior',
-			)
-
-		);
-	}
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -44,7 +31,7 @@ class Building extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-
+		
 	/**
 	 * @return string the associated database table name
 	 */
@@ -61,11 +48,10 @@ class Building extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, create_time, create_user_id', 'required'),
-			array('create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
+			array('name', 'required'),
+			array('name', 'unique'),
 			array('name', 'length', 'max'=>30),
 			array('map_image, street_image', 'length', 'max'=>255),
-			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, map_image, street_image, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -127,11 +113,17 @@ class Building extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
-	protected function beforeSave() {
-		return parent::beforeSave();
+
+	/**
+	 * Save current record to temp variable to be able to rollback any changes.
+	 */
+	public function afterFind()
+	{
+		$this->_oldValues = $this->attributes;
+		Yii::trace('Model backup created.','Building::afterFind');
+		return parent::afterFind();
 	}
-	
+
 	protected function afterSave() {
 		Yii::trace('Begin','Building::afterSave');
 
@@ -176,13 +168,6 @@ class Building extends CActiveRecord
 		return parent::afterSave();
 	}
 	
-	public function afterFind()
-	{
-		$this->_oldValues = $this->attributes;
-		Yii::trace('Model backup created.','Building::afterFind');
-		return parent::afterFind();
-	}
-
 	public function afterDelete()
 	{
 		Yii::trace('Begin','Building::afterDelete');

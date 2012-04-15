@@ -23,33 +23,20 @@
  * @property User $updateUser
  * @property Feature[] $features
  */
-class Room extends CActiveRecord
+class Room extends ActiveRecordBase
 {
-	
 	private $_oldValues = array();
-	
-	/**
-	 * @return array behavior rules for model attributes.
-	 */
-	public function behaviors() {
-		return array(
-			'CTimestampBehavior'=>array(
-				'class'=>'zii.behaviors.CTimestampBehavior',
-			)
-
-		);
-	}
 	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Room the static model class
+	 * @return Building the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -66,11 +53,12 @@ class Room extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('number, status, floor_id, create_time, create_user_id', 'required'),
-			array('status, floor_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
+			array('number, status, floor_id', 'required'),
+			array('number', 'unique'),
+			array('status, floor_id', 'numerical', 'integerOnly'=>true),
 			array('number', 'length', 'max'=>10),
 			array('front_image, back_image, map_image', 'length', 'max'=>255),
-			array('description, update_time', 'safe'),
+			array('description','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -143,8 +131,14 @@ class Room extends CActiveRecord
 		));
 	}
 	
-	public function beforeSave() {
-		return parent::beforeSave();
+	/**
+	 * Save current record to temp variable to be able to rollback any changes.
+	 */
+	public function afterFind()
+	{
+		$this->_oldValues = $this->attributes;
+		Yii::trace('Model backup created.','Building::afterFind');
+		return parent::afterFind();
 	}
 	
 	public function afterSave() {
@@ -261,13 +255,6 @@ class Room extends CActiveRecord
 		Yii::trace('end','Room::afterSave');
 			
 		return parent::afterSave();
-	}
-
-	public function afterFind()
-	{
-		$this->_oldValues = $this->attributes;
-		Yii::trace('Model backup created.','Room::afterFind');
-		return parent::afterFind();
 	}
 
 	public function afterDelete()

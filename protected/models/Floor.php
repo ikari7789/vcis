@@ -19,32 +19,20 @@
  * @property User $updateUser
  * @property Room[] $rooms
  */
-class Floor extends CActiveRecord
+class Floor extends ActiveRecordBase
 {
 	private $_oldValues = array();
 	
 	/**
-	 * @return array behavior rules for model attributes.
-	 */
-	public function behaviors() {
-		return array(
-			'CTimestampBehavior'=>array(
-				'class'=>'zii.behaviors.CTimestampBehavior',
-			)
-
-		);
-	}
-
-	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
-	 * @return Floor the static model class
+	 * @return Building the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -61,10 +49,9 @@ class Floor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('level, building_id, create_time, create_user_id', 'required'),
-			array('level, building_id, create_user_id, update_user_id', 'numerical', 'integerOnly'=>true),
+			array('level, building_id', 'required'),
+			array('level, building_id', 'numerical', 'integerOnly'=>true),
 			array('map_image', 'length', 'max'=>255),
-			array('update_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, level, map_image, building_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -128,10 +115,6 @@ class Floor extends CActiveRecord
 		));
 	}
 	
-	protected function beforeSave() {
-		return parent::beforeSave();
-	}
-	
 	protected function afterSave() {		
 		Yii::trace('Begin','Floor::afterSave');
 
@@ -176,13 +159,6 @@ class Floor extends CActiveRecord
 		return parent::afterSave();
 	}
 
-	public function afterFind()
-	{
-		$this->_oldValues = $this->attributes;
-		Yii::trace('Model backup created.','Floor::afterFind');
-		return parent::afterFind();
-	}
-
 	public function afterDelete()
 	{
 		Yii::trace('Begin','Floor::afterDelete');
@@ -206,5 +182,15 @@ class Floor extends CActiveRecord
 		
 		Yii::trace('End','Floor::afterDelete');
 		return parent::afterDelete();
+	}
+	
+	/**
+	 * Save current record to temp variable to be able to rollback any changes.
+	 */
+	public function afterFind()
+	{
+		$this->_oldValues = $this->attributes;
+		Yii::trace('Model backup created.','Building::afterFind');
+		return parent::afterFind();
 	}
 }
