@@ -34,9 +34,9 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'user_level'); ?>
-		<?php echo $form->textField($model,'user_level'); ?>
-		<?php echo $form->error($model,'user_level'); ?>
+		<?php echo $form->labelEx($model,'role'); ?>
+		<?php echo $form->dropDownList($model,'role',$model->getUserRoles()); ?>
+		<?php echo $form->error($model,'role'); ?>
 	</div>
 
 	<div class="row buttons">

@@ -31,11 +31,11 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array(),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin','create','update','delete'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -62,15 +62,19 @@ class UserController extends Controller
 	public function actionCreate()
 	{
 		$model=new User;
-
+		
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
 			if($model->save())
+			{
+				$auth=Yii::app()->authManager;
+				$auth->assign($_POST['User']['role'],$model->id);
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('create',array(
@@ -86,15 +90,24 @@ class UserController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
+		$model->role = $model->getAuthRole();
+		
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['User']))
 		{
 			$model->attributes=$_POST['User'];
 			if($model->save())
+			{
+				$auth=Yii::app()->authManager;
+				if ($model->getAuthRole() != $_POST['User']['role'])
+				{
+					$model->removeAuth();
+					$auth->assign($_POST['User']['role'],$model->id);
+				}
 				$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		$this->render('update',array(

@@ -23,7 +23,7 @@ abstract class ActiveRecordBase extends CActiveRecord
 		{
 			// set the create date, last updated date
 			// and the user doing the creating
-			$this->create_user_id=$this->update_user_id=Yii::app()->user_id;
+			$this->create_user_id=$this->update_user_id=Yii::app()->user->id;
 		}
 		else
 		{
@@ -31,7 +31,6 @@ abstract class ActiveRecordBase extends CActiveRecord
 			// and last updated user id
 			$this->update_user_id=Yii::app()->user->id;
 		}
-		
 		return parent::beforeValidate();
 	}
 

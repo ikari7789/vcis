@@ -8,7 +8,6 @@
  * @property string $email
  * @property string $username
  * @property string $password
- * @property integer $user_level
  * @property string $last_login_time
  * @property string $create_time
  * @property string $update_time
@@ -33,8 +32,13 @@
  */
 class User extends ActiveRecordBase
 {
+	
 	private $_oldValues = array();
 	public $password_repeat;
+	public $role;
+	
+	const ROLE_ADMINISTRATOR = 'administrator';
+	const ROLE_EMPLOYEE = 'employee';
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -64,13 +68,13 @@ class User extends ActiveRecordBase
 		return array(
 			array('email, username, password', 'required'),
 			array('email, username', 'unique'),
+			array('email', 'email'),
 			array('password', 'compare'),
-			array('user_level', 'integerOnly'=>true),
 			array('email, username, password', 'length', 'max'=>256),
-			array('password_repeat', 'safe'),
+			array('password_repeat, role', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, email, username, password, user_level, last_login_time, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
+			array('id, email, username, password, last_login_time, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -109,7 +113,6 @@ class User extends ActiveRecordBase
 			'email' => 'Email',
 			'username' => 'Username',
 			'password' => 'Password',
-			'user_level' => 'User Level',
 			'last_login_time' => 'Last Login Time',
 			'create_time' => 'Create Time',
 			'update_time' => 'Update Time',
@@ -133,7 +136,6 @@ class User extends ActiveRecordBase
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('username',$this->username,true);
 		$criteria->compare('password',$this->password,true);
-		$criteria->compare('user_level',$this->user_level);
 		$criteria->compare('last_login_time',$this->last_login_time,true);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
@@ -164,8 +166,42 @@ class User extends ActiveRecordBase
 		$this->password = $this->encrypt($this->password);
 	}
 	
+	protected function afterDelete()
+	{
+		$this->removeAuth();
+	}
+	
+	public function removeAuth()
+	{
+		$auth = Yii::app()->authManager;
+		$authItems = $auth->getAuthItems(NULL,$this->id);
+		foreach ($authItems as $authItem)
+			$authItem->revoke($this->_oldValues['id']);
+	}
+	
 	public function encrypt($value)
 	{
 		return md5($value);
+	}
+	
+	public function getAuthRole()
+	{
+		$auth = Yii::app()->authManager;
+		$authItems = $auth->getAuthItems(2,$this->id);
+		$roles = array();
+		
+		foreach ($authItems as $authItems)
+			$roles[] = $authItems->getName();
+		
+		return $roles[0];
+		
+	}
+	
+	public function getUserRoles()
+	{
+		return array(
+			self::ROLE_EMPLOYEE=>'Employee',
+			self::ROLE_ADMINISTRATOR=>'Administrator',
+		);
 	}
 }

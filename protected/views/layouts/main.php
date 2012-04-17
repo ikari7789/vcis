@@ -48,10 +48,10 @@
         </form>
         <?php $this->widget('zii.widgets.CMenu', array(
           'items'=>array(
-            array('label'=>'Administrative Tools', 'url'=>array('admin/index')), //, 'visible'=>!Yii::app()->user->isGuest),
+            array('label'=>'Administrative Tools', 'url'=>array('admin/index'), 'visible'=>!Yii::app()->user->isGuest), //, 'visible'=>!Yii::app()->user->isGuest),
             array('label'=>'View List', 'url'=>array('list/index')),
             array('label'=>'Help', 'url'=>array('site/page', 'view'=>'help')),
-            array('label'=>'Logout', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest),
+            array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('site/logout'), 'visible'=>!Yii::app()->user->isGuest),
           ),
           'firstItemCssClass'=>'first',
           'id'=>'main-nav',

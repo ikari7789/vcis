@@ -8,3 +8,4 @@ $this->breadcrumbs=array(
 <?php echo CHtml::link('Manage Rooms', array('room/admin')); ?><br />
 <?php echo CHtml::link('Manage Feature Categories', array('category/admin')); ?><br />
 <?php echo CHtml::link('Manage Features', array('feature/admin')); ?><br />
+<?php echo CHtml::link('Manage Users', array('user/admin')); ?><br />

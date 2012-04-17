@@ -30,6 +30,10 @@ return array(
 
 	// application components
 	'components'=>array(
+		'authManager'=>array(
+			'class'=>'CDbAuthManager',
+			'connectionID'=>'db',
+		),
 		'session'=>array(
 			'autoStart'=>true,
 		),

@@ -16,10 +16,6 @@
 	<?php echo CHtml::encode($data->password); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('user_level')); ?>:</b>
-	<?php echo CHtml::encode($data->user_level); ?>
-	<br />
-
 	<b><?php echo CHtml::encode($data->getAttributeLabel('last_login_time')); ?>:</b>
 	<?php echo CHtml::encode($data->last_login_time); ?>
 	<br />

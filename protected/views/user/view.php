@@ -22,7 +22,6 @@ $this->menu=array(
 		'email',
 		'username',
 		'password',
-		'user_level',
 		'last_login_time',
 		'create_time',
 		'update_time',

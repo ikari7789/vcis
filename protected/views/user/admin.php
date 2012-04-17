@@ -42,11 +42,8 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'id',
 		'email',
 		'username',
-		'password',
-		'user_level',
 		'last_login_time',
 		/*
 		'create_time',

@@ -19,12 +19,7 @@
 		<?php echo $form->label($model,'username'); ?>
 		<?php echo $form->textField($model,'username',array('size'=>60,'maxlength'=>256)); ?>
 	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'user_level'); ?>
-		<?php echo $form->textField($model,'user_level'); ?>
-	</div>
-
+	
 	<div class="row">
 		<?php echo $form->label($model,'last_login_time'); ?>
 		<?php echo $form->textField($model,'last_login_time'); ?>
