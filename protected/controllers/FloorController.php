@@ -31,12 +31,8 @@ class FloorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('admin','create','update'),
+				'actions'=>array('admin','create','update','delete'),
 				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('delete'),
-				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -85,6 +81,10 @@ class FloorController extends Controller
 	 */
 	public function actionCreate()
 	{
+		if (!Yii::app()->user->checkAccess('createFloor', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new Floor;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -110,6 +110,10 @@ class FloorController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		if (!Yii::app()->user->checkAccess('updateFloor', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -134,6 +138,10 @@ class FloorController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		if (!Yii::app()->user->checkAccess('deleteFloor', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		Yii::trace('Yii::app()->request->isPostRequest: '.ii::app()->request->isPostRequest,'RoomController::actionDelete');
 		if(Yii::app()->request->isPostRequest)
 		{
@@ -164,6 +172,10 @@ class FloorController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		if (!Yii::app()->user->checkAccess('manageFloor', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new Floor('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Floor']))

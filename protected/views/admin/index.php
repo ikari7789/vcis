@@ -4,8 +4,13 @@ $this->breadcrumbs=array(
 );?>
 <h1>Administrative Tools</h1>
 
-<?php echo CHtml::link('Manage Buildings', array('building/admin')); ?><br />
-<?php echo CHtml::link('Manage Rooms', array('room/admin')); ?><br />
-<?php echo CHtml::link('Manage Feature Categories', array('category/admin')); ?><br />
-<?php echo CHtml::link('Manage Features', array('feature/admin')); ?><br />
-<?php echo CHtml::link('Manage Users', array('user/admin')); ?><br />
+<?php 
+$this->widget('zii.widgets.CMenu', array(
+	'items'=>array(
+		array('label'=>'Manage Buildings', 'url'=>array('building/admin')),
+		array('label'=>'Manage Rooms', 'url'=>array('room/admin')),
+		array('label'=>'Manage Feature Categories', 'url'=>array('category/admin')),
+		array('label'=>'Manage Features', 'url'=>array('feature/admin')),
+		array('label'=>'Manage Users', 'url'=>array('user/admin'), 'visible'=>Yii::app()->user->checkAccess('manageUser', Yii::app()->user->id))
+	)
+)); ?>

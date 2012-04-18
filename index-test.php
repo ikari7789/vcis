@@ -12,4 +12,8 @@ $config=dirname(__FILE__).'/protected/config/test.php';
 defined('YII_DEBUG') or define('YII_DEBUG',true);
 
 require_once($yii);
-Yii::createWebApplication($config)->run();
+try {
+	Yii::createWebApplication($config)->run();
+} catch (Exception $e) {
+	throw new CHttpException(400,'Sorry, but the proper database could not be found.');
+}

@@ -1,11 +1,13 @@
 <?php
 $this->breadcrumbs=array(
-	'Users'=>array('index'),
-	'Create',
+	'Administrative Tools'=>array('admin/index'),
+	//'Users'=>array('index'),
+	'Manage Users'=>array('user/admin'),
+	'Create User',
 );
 
 $this->menu=array(
-	array('label'=>'List User', 'url'=>array('index')),
+	//array('label'=>'List User', 'url'=>array('index')),
 	array('label'=>'Manage User', 'url'=>array('admin')),
 );
 ?>

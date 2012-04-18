@@ -31,12 +31,8 @@ class CategoryController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('admin','create','update'),
+				'actions'=>array('admin','create','update','delete'),
 				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('delete'),
-				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -61,6 +57,10 @@ class CategoryController extends Controller
 	 */
 	public function actionCreate()
 	{
+		if (!Yii::app()->user->checkAccess('createCategory', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new Category;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -85,6 +85,10 @@ class CategoryController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		if (!Yii::app()->user->checkAccess('updateCategory', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -109,6 +113,10 @@ class CategoryController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		if (!Yii::app()->user->checkAccess('deleteCategory', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
@@ -138,6 +146,10 @@ class CategoryController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		if (!Yii::app()->user->checkAccess('manageCategory', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new Category('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Category']))

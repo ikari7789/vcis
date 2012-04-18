@@ -38,7 +38,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php 
+
+$template = '{view}';
+	
+if (Yii::app()->user->checkAccess('updateFeature', Yii::app()->user->id))
+	$template .= '{update}';
+
+if (Yii::app()->user->checkAccess('deleteFeature', Yii::app()->user->id))
+	$template .= '{delete}';
+
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'feature-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -51,6 +61,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'name',
 		array(
 			'class'=>'CButtonColumn',
+			'template'=>$template,
 		),
 	),
 )); ?>

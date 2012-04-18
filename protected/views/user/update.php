@@ -1,14 +1,16 @@
 <?php
 $this->breadcrumbs=array(
-	'Users'=>array('index'),
-	$model->id=>array('view','id'=>$model->id),
-	'Update',
+	'Administrative Tools'=>array('admin/index'),
+	//'Users'=>array('index'),
+	//$model->id=>array('view','id'=>$model->id),
+	'Manage Users'=>array('user/admin'),
+	'Update User: '.$model->username,
 );
 
 $this->menu=array(
-	array('label'=>'List User', 'url'=>array('index')),
+	//array('label'=>'List User', 'url'=>array('index')),
 	array('label'=>'Create User', 'url'=>array('create')),
-	array('label'=>'View User', 'url'=>array('view', 'id'=>$model->id)),
+	//array('label'=>'View User', 'url'=>array('view', 'id'=>$model->id)),
 	array('label'=>'Manage User', 'url'=>array('admin')),
 );
 ?>

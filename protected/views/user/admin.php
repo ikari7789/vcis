@@ -1,11 +1,12 @@
 <?php
 $this->breadcrumbs=array(
-	'Users'=>array('index'),
-	'Manage',
+	'Administrative Tools'=>array('admin/index'),
+	//'Users'=>array('index'),
+	'Manage Users',
 );
 
 $this->menu=array(
-	array('label'=>'List User', 'url'=>array('index')),
+	//array('label'=>'List User', 'url'=>array('index')),
 	array('label'=>'Create User', 'url'=>array('create')),
 );
 
@@ -37,7 +38,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php 
+
+$template = '{view}';
+	
+if (Yii::app()->user->checkAccess('updateUser', Yii::app()->user->id))
+	$template .= '{update}';
+
+if (Yii::app()->user->checkAccess('deleteUser', Yii::app()->user->id))
+	$template .= '{delete}';
+
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'user-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -53,6 +64,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		*/
 		array(
 			'class'=>'CButtonColumn',
+			'template'=>$template,
 		),
 	),
 )); ?>

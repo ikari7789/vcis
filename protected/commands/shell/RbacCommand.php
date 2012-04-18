@@ -34,13 +34,13 @@ EOD;
 		
 		// provide the opportunity for the user to abort the request
 		echo "This command will create two roles: Administrator, Employee and the following permissions:\n";
-		echo "create, read, update, and delete user\n";
-		echo "create, read, update, and delete building\n";
-		echo "create, read, update, and delete floor\n";
-		echo "create, read, update, and delete room\n";
-		echo "create, read, update, and delete room feature\n";
-		echo "create, read, update, and delete feature\n";
-		echo "create, read, update, and delete feature category\n";
+		echo "create, read, update, delete, and manage user\n";
+		echo "create, read, update, delete, and manage building\n";
+		echo "create, read, update, delete, and manage floor\n";
+		echo "create, read, update, delete, and manage room\n";
+		echo "create, read, update, delete, and manage room feature\n";
+		echo "create, read, update, delete, and manage feature\n";
+		echo "create, read, update, delete, and manage feature category\n";
 		echo "Would you like to continue? [Yes|No] ";
 		
 		// check the input from the user and continue if they indicated yes to the above question
@@ -50,42 +50,49 @@ EOD;
 			$this->_authManager->clearAll();
 			
 			// create the lowest level operations for users
+			$this->_authManager->createOperation("manageUser","manage users");
 			$this->_authManager->createOperation("createUser","create a new user");
 			$this->_authManager->createOperation("readUser","read user profile information");
 			$this->_authManager->createOperation("updateUser","update a user's information");
 			$this->_authManager->createOperation("deleteUser","remove a user");
 			
 			// create the lowest level operations for buildings
+			$this->_authManager->createOperation("manageBuilding","manage buildings");
 			$this->_authManager->createOperation("createBuilding","create a new building");
 			$this->_authManager->createOperation("readBuilding","read building information");
 			$this->_authManager->createOperation("updateBuilding","update a building's information");
 			$this->_authManager->createOperation("deleteBuilding","remove a building");
 			
 			// create the lowest level operations for floors
+			$this->_authManager->createOperation("manageFloor","manage floors");
 			$this->_authManager->createOperation("createFloor","create a new floor");
 			$this->_authManager->createOperation("readFloor","read floor information");
 			$this->_authManager->createOperation("updateFloor","update a floor's information");
 			$this->_authManager->createOperation("deleteFloor","remove a floor");
 			
 			// create the lowest level operations for rooms
+			$this->_authManager->createOperation("manageRoom","manage rooms");
 			$this->_authManager->createOperation("createRoom","create a new room");
 			$this->_authManager->createOperation("readRoom","read room information");
 			$this->_authManager->createOperation("updateRoom","update a room's information");
 			$this->_authManager->createOperation("deleteRoom","remove a room");
 			
 			// create the lowest level operations for room features
+			$this->_authManager->createOperation("manageRoomFeature","manage room features");
 			$this->_authManager->createOperation("createRoomFeature","create a new room feature");
 			$this->_authManager->createOperation("readRoomFeature","read room feature information");
 			$this->_authManager->createOperation("updateRoomFeature","update a room feature's information");
 			$this->_authManager->createOperation("deleteRoomFeature","remove a room feature");
 			
 			// create the lowest level operations for features
+			$this->_authManager->createOperation("manageFeature","manage features");
 			$this->_authManager->createOperation("createFeature","create a new feature");
 			$this->_authManager->createOperation("readFeature","read feature information");
 			$this->_authManager->createOperation("updateFeature","update a feature's information");
 			$this->_authManager->createOperation("deleteFeature","remove a feature");
 			
 			// create the lowest level operations for categories
+			$this->_authManager->createOperation("manageCategory","manage categories");
 			$this->_authManager->createOperation("createCategory","create a new category");
 			$this->_authManager->createOperation("readCategory","read category information");
 			$this->_authManager->createOperation("updateCategory","update a category's information");
@@ -115,6 +122,16 @@ EOD;
 			$role->addChild("updateFeature");
 			$role->addChild("updateCategory");
 			
+			$role->addChild("manageBuilding");
+			$role->addChild("manageFloor");
+			$role->addChild("manageRoom");
+			$role->addChild("manageRoomFeature");
+			$role->addChild("manageFeature");
+			$role->addChild("manageCategory");
+			
+			$role->addChild("deleteRoom");
+			$role->addChild("deleteRoomFeature");
+			
 			// create the administrator role and add the appropriate permissions as children to this role
 			$role=$this->_authManager->createRole("administrator","Super user capable of all CRUD abilities");
 			$role->addChild("employee");
@@ -125,11 +142,11 @@ EOD;
 			
 			$role->addChild("updateUser");
 			
+			$role->addChild("manageUser");
+			
 			$role->addChild("deleteUser");
 			$role->addChild("deleteBuilding");
 			$role->addChild("deleteFloor");
-			$role->addChild("deleteRoom");
-			$role->addChild("deleteRoomFeature");
 			$role->addChild("deleteFeature");
 			$role->addChild("deleteCategory");
 			

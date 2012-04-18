@@ -31,12 +31,8 @@ class UserController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(),
-				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','create','update','delete'),
-				'users'=>array('admin'),
+				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -61,6 +57,10 @@ class UserController extends Controller
 	 */
 	public function actionCreate()
 	{
+		if (!Yii::app()->user->checkAccess('createUser', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new User;
 		
 		// Uncomment the following line if AJAX validation is needed
@@ -73,7 +73,7 @@ class UserController extends Controller
 			{
 				$auth=Yii::app()->authManager;
 				$auth->assign($_POST['User']['role'],$model->id);
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 			}
 		}
 
@@ -89,6 +89,10 @@ class UserController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		if (!Yii::app()->user->checkAccess('updateUser', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=$this->loadModel($id);
 		$model->role = $model->getAuthRole();
 		
@@ -97,7 +101,14 @@ class UserController extends Controller
 
 		if(isset($_POST['User']))
 		{
+			if (!User::encrypt($_POST['User']['currentPassword']) == $model->password)
+				$password = $model->password;
+			else
+				$password = $_POST['User']['password'];
+			
 			$model->attributes=$_POST['User'];
+			$model->password = $password;
+			
 			if($model->save())
 			{
 				$auth=Yii::app()->authManager;
@@ -106,7 +117,7 @@ class UserController extends Controller
 					$model->removeAuth();
 					$auth->assign($_POST['User']['role'],$model->id);
 				}
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 			}
 		}
 
@@ -122,6 +133,10 @@ class UserController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		if (!Yii::app()->user->checkAccess('deleteUser', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
@@ -151,6 +166,10 @@ class UserController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		if (!Yii::app()->user->checkAccess('manageUser', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new User('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['User']))

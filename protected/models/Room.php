@@ -345,8 +345,11 @@ class Room extends ActiveRecordBase
 		Yii::trace('$model->feature_id: '.$model->feature_id,'Room::createFeature');
 		$model->details = $details;
 		Yii::trace('$model->details: '.$model->details,'Room::createFeature');
-		$model->verified = $verified;
-		Yii::trace('$model->verified: '.$model->verified,'Room::createFeature');
+		if ($verified == 1)
+			$model->verification_time = date( 'Y-m-d H:i:s', time());
+		else
+			$model->verification_time = NULL;
+		Yii::trace('$model->verification_time: '.$model->verification_time,'Room::createFeature');
 		
 		Yii:: trace('End','Room::createFeature');
 		return $model;
@@ -374,13 +377,13 @@ class Room extends ActiveRecordBase
 		else
 		{
 			Yii::trace('Feature: '.$model->feature->name.' found for Room: '.$model->room->number,'Room::addFeature');
-			if ($model->details == $details && $model->verified == $verified)
+			if ($model->details == $details && $model->verification_time == date( 'Y-m-d H:i:s', time()))
 			{
 				Yii::trace('No changes found in feature. Returning.','Room::addFeature');
 				return true;
 			}
 			$model->details = $details;
-			$model->verified = $verified;
+			$model->verification_time = date( 'Y-m-d H:i:s', time());
 			$saveType = 'update';
 				
 		}

@@ -35,6 +35,7 @@ class User extends ActiveRecordBase
 	
 	private $_oldValues = array();
 	public $password_repeat;
+	public $currentPassword;
 	public $role;
 	
 	const ROLE_ADMINISTRATOR = 'administrator';
@@ -70,8 +71,11 @@ class User extends ActiveRecordBase
 			array('email, username', 'unique'),
 			array('email', 'email'),
 			array('password', 'compare'),
+			array('password', 'length', 'min'=>5),
 			array('email, username, password', 'length', 'max'=>256),
 			array('password_repeat, role', 'safe'),
+			array('currentPassword', 'safe', 'on'=>'create'),
+			array('currentPassword', 'required', 'on'=>'update'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, email, username, password, last_login_time, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),

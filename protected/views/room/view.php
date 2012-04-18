@@ -45,6 +45,10 @@ $this->menu=array(
 </div>
 <div class="right-room">
 	<div class="details">
+		<?php if (isset($model->description)): ?>
+			<h2>Room Details</h2>
+			<p><?php echo CHtml::encode($model->description); ?></p>
+		<?php endif; ?>
 		<h2>Room Features</h2>
 		<?php echo CHtml::hiddenField('room_id', $model->id); ?>
 		<?php foreach($categories as $category) { ?>
@@ -56,8 +60,8 @@ $this->menu=array(
 						<li>
 							<span class="feature"><?php echo $feature->name; ?></span>
 							<span class="details"><?php echo $roomFeatures[$feature->id]['details']; ?></span>
-							<?php if ($roomFeatures[$feature->id]['verified'] == 1) { ?>
-								<span class="verified">Verified</span>
+							<?php if ($roomFeatures[$feature->id]['verification_time'] != '0000-00-00 00:00:00') { ?>
+								<span class="verified">Verified on <?php echo CHtml::encode($roomFeatures[$feature->id]['verification_time']); ?></span>
 							<?php } ?>
 						</li>
 						<?php } ?>

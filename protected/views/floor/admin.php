@@ -38,7 +38,17 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php
+
+$template = '{view}';
+	
+if (Yii::app()->user->checkAccess('updateFloor', Yii::app()->user->id))
+	$template .= '{update}';
+
+if (Yii::app()->user->checkAccess('deleteFloor', Yii::app()->user->id))
+	$template .= '{delete}';
+
+$this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'floor-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -54,6 +64,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'update_time',
 		array(
 			'class'=>'CButtonColumn',
+			'template'=>$template,
 		),
 	),
 )); ?>

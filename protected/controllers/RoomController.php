@@ -34,10 +34,6 @@ class RoomController extends Controller
 				'actions'=>array('admin','create','update','delete'),
 				'users'=>array('@'),
 			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array(),
-				'users'=>array('admin'),
-			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -55,7 +51,7 @@ class RoomController extends Controller
 		$roomFeatures = array();
 		foreach ($model->room_features as $feature) {
 			$roomFeatures[$feature->feature->id]['details'] = $feature->details;
-			$roomFeatures[$feature->feature->id]['verified'] = $feature->verified;
+			$roomFeatures[$feature->feature->id]['verification_time'] = $feature->verification_time;
 		}
 		
 		$this->render('view',array(
@@ -71,6 +67,10 @@ class RoomController extends Controller
 	 */
 	public function actionCreate()
 	{
+		if (!Yii::app()->user->checkAccess('createRoom', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		Yii::trace('Begin','RoomController::actionCreate');
 		
 		$model=new Room;
@@ -110,7 +110,7 @@ class RoomController extends Controller
 					{
 						if (!empty($feature['details']))
 						{
-							if (!isset($feature['verified']))
+							if (isset($feature['verified']))
 								$feature['verified'] = 0;
 							Yii::trace('Attempting to save feature: '.$featureId,'RoomController::actionCreate');
 							$model->addFeature($featureId, $feature['details'], $feature['verified']);
@@ -138,6 +138,10 @@ class RoomController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		if (!Yii::app()->user->checkAccess('updateRoom', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		Yii::trace('Begin','RoomController::actionUpdate');
 		$model=$this->loadModel($id);
 		Yii::trace('Model loaded','RoomController::actionUpdate');
@@ -154,7 +158,8 @@ class RoomController extends Controller
 		$roomFeatures = array();
 		foreach ($model->room_features as $feature) {
 			$roomFeatures[$feature->feature->id]['details'] = $feature->details;
-			$roomFeatures[$feature->feature->id]['verified'] = $feature->verified;
+			if (isset($feature->verification_time))
+				$roomFeatures[$feature->feature->id]['verified'] = 1;
 		}
 		Yii::trace('Room Features loaded.','RoomController::actionUpdate');
 
@@ -234,7 +239,7 @@ class RoomController extends Controller
 				}
 				
 				Yii::trace('Redirecting to view: admin','RoomController::actionUpdate');
-				//$this->redirect(array('admin')); //$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin')); //$this->redirect(array('view','id'=>$model->id));
 			}
 		}
 
@@ -255,6 +260,10 @@ class RoomController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		if (!Yii::app()->user->checkAccess('deleteRoom', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request
@@ -285,6 +294,10 @@ class RoomController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		if (!Yii::app()->user->checkAccess('manageRoom', Yii::app()->user->id))
+		{
+			throw new CHttpException(403,'You are not authorized to perform this action.');
+		}
 		$model=new Room('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Room']))

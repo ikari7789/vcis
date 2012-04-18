@@ -9,9 +9,9 @@ return CMap::mergeArray(
 			),
 			// uncomment the following to provide test database connection
 			'db'=>array(
-				'connectionString'=>'mysql:host=localhost;dbname=vcis_test',
+				'connectionString'=>'mysql:host=mysql.standingmist.com;dbname=standingmist_vcis_test',
 				'emulatePrepare'=>true,
-				'username'=>'root',
+				'username'=>'vcis',
 				'password'=>'mcssad2',
 				'charset'=>'utf8',
 			),
