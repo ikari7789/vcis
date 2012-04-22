@@ -46,17 +46,16 @@ class RoomController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$this->layout = '//layouts/column1';
+		
 		$model = $this->loadModel($id);
-		$categories=Category::model()->findAll(array('order'=>'name ASC'));
 		$roomFeatures = array();
 		foreach ($model->room_features as $feature) {
-			$roomFeatures[$feature->feature->id]['details'] = $feature->details;
-			$roomFeatures[$feature->feature->id]['verification_time'] = $feature->verification_time;
+			$roomFeatures[$feature->feature->category->name][$feature->feature->name] = $feature;
 		}
 		
 		$this->render('view',array(
 			'model'=>$model,
-			'categories'=>$categories,
 			'roomFeatures'=>$roomFeatures,
 		));
 	}

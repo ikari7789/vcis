@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='Create a User | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Users'=>array('index'),

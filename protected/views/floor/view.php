@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = $model->building->name.' | Floor : '.$model->level.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Floors'=>array('index'),
 	$model->id,

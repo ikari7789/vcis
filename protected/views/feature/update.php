@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Update Feature: '.$model->name.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Features'=>array('index'),

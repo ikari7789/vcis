@@ -1,4 +1,6 @@
 <?php
+$this->pageTitle=$model->number.' | Floor '.$model->floor->level.' | '.$model->floor->building->name.' | '.Yii::app()->name;
+
 $this->breadcrumbs=array(
 	$model->floor->building->name=>array('building/view','id'=>$model->floor->building->id),
 	$model->number,
@@ -32,43 +34,44 @@ $this->menu=array(
 	});
 "); ?>
 
-<h1><?php echo $model->floor->building->name.' - Floor '.$model->floor->level.' - '.$model->number; ?></h1>
-
-<div class="left-room">
+<div class="content-header">
+	<h1><?php echo $model->floor->building->name.' - Floor '.$model->floor->level.' - '.$model->number; ?></h1>
+	<?php if (Yii::app()->user->checkAccess('updateRoom', Yii::app()->user->id)): ?>
+			<div class="admin"><?php echo CHtml::link('Update', array('room/update', 'id'=>$model->id)); ?></div>
+	<?php endif; ?>
+</div>
+<div class="left-column room">
 	<div class="images">
-		<h3>Front Image</h3>
-		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image); ?>
+		<h2>Front View</h2>
+		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image, 'Room '.$model->number.' front view', array('class'=>'front-image')); ?>
 		
-		<h3>Back Image</h3>
-		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image); ?>
+		<h2>Back View</h2>
+		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image, 'Room '.$model->number.' back view', array('class'=>'back-image')); ?>
 	</div>
 </div>
-<div class="right-room">
-	<div class="details">
-		<?php if (isset($model->description)): ?>
+<div class="right-column room">
+	<?php echo CHtml::hiddenField('room_id', $model->id); ?>
+	<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
+	<?php if (isset($model->description)): ?>
+		<div class="details">
 			<h2>Room Details</h2>
 			<p><?php echo CHtml::encode($model->description); ?></p>
-		<?php endif; ?>
-		<h2>Room Features</h2>
-		<?php echo CHtml::hiddenField('room_id', $model->id); ?>
-		<?php foreach($categories as $category) { ?>
-			<?php if (count($category->features) > 0) { ?>
-				<h3><?php echo $category->name; ?></h3>
-				<ul class="room-details">
-				<?php foreach($category->features as $feature) { ?>
-						<?php if (isset($roomFeatures[$feature->id])) { ?>
+		</div>
+	<?php endif; ?>
+	<?php if (isset($roomFeatures) && count($roomFeatures) > 0): ?>
+		<div class="features">
+			<h2>Room Features</h2>
+			<?php foreach($roomFeatures as $categoryName => $features): ?>
+				<h3 class="category"><?php echo $categoryName; ?></h3>
+				<ul class="room-features">
+					<?php foreach ($features as $featureName => $feature): ?>
 						<li>
-							<span class="feature"><?php echo $feature->name; ?></span>
-							<span class="details"><?php echo $roomFeatures[$feature->id]['details']; ?></span>
-							<?php if ($roomFeatures[$feature->id]['verification_time'] != '0000-00-00 00:00:00') { ?>
-								<span class="verified">Verified on <?php echo CHtml::encode($roomFeatures[$feature->id]['verification_time']); ?></span>
-							<?php } ?>
+							<div class="feature"><?php echo $featureName; ?>:</div>
+							<div class="details"><?php echo $feature->details; ?></div>
 						</li>
-						<?php } ?>
-				<?php } ?>
+					<?php endforeach; ?>
 				</ul>
-			<?php } ?>
-		<?php }	?>
-	</div>
-	<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
+			<?php endforeach; ?>
+		</div>
+	<?php endif; ?>
 </div>

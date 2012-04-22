@@ -44,8 +44,8 @@ body { margin: 0; font-size: 1em; line-height: 1.4; }
 
 /*::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
 ::selection { background: #fe57a1; color: #fff; text-shadow: none; } */
-::-moz-selection { background: purple; color: #fff; text-shadow: none; }
-::selection { background: purple; color: #fff; text-shadow: none; }
+::-moz-selection { background: #501D82; color: #fff; text-shadow: none; }
+::selection { background: #501D82; color: #fff; text-shadow: none; }
 
 /* =============================================================================
    Links

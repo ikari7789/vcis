@@ -39,6 +39,7 @@ class UserIdentity extends CUserIdentity
 				}
 				$this->setState('lastLoginTime', $lastLogin);
 				$this->setState('name',$user->username);
+				Yii::app()->user->setFlash('lastLoginFlash', 'Last logged in on '.date('l, F d, Y, g:i a', $lastLoginTime));
 				$this->errorCode = self::ERROR_NONE;
 			}
 		}

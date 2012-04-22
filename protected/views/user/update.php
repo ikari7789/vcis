@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='Update User: '.$model->username.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Users'=>array('index'),

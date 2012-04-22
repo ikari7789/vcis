@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='Room Administration | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Rooms'=>array('index'),

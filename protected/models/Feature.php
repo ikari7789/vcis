@@ -70,6 +70,7 @@ class Feature extends ActiveRecordBase
 			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
 			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
 			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
+			'featureDetails' => array(self::HAS_MANY, 'RoomFeature', 'feature_id'),
 			'rooms' => array(self::MANY_MANY, 'Room', 'room_feature(feature_id, room_id)'),
 		);
 	}

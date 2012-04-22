@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Feature Administration | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Features'=>array('index'),

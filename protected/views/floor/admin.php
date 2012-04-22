@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Floor Administration | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	'Floors'=>array('index'),

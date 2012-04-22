@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='Update Room: '.$model->number.' | Floor '.$model->floor->level.' | '.$model->floor->building->name.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Rooms'=>array('index'),

@@ -1,5 +1,5 @@
 <?php
-
+$this->pageTitle = 'Create a Building | '.Yii::app()->name;
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/building-form.js",CClientScript::POS_HEAD); 
 
 $this->breadcrumbs=array(

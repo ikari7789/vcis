@@ -1,5 +1,5 @@
 <?php
-
+$this->pageTitle = 'Update Building: '.$model->name.' | '.Yii::app()->name;
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/building-form.js",CClientScript::POS_HEAD); 
 
 $this->breadcrumbs=array(

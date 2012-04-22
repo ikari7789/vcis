@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='Create a Room | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Rooms'=>array('index'),

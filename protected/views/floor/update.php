@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Update Floor: '.$model->building->name.' | Floor : '.$model->level.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	'Floors'=>array('index'),

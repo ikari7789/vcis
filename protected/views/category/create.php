@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Create a Category | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Categories'=>array('index'),

@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle='User: '.$model->username.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Users'=>array('index'),
 	$model->id,

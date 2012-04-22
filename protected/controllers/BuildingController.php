@@ -6,7 +6,7 @@ class BuildingController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -51,52 +51,58 @@ class BuildingController extends Controller
 		
 		// Load data for floor dropdown
 		$floors = CHtml::listData($model->floors, 'id', 'level');
-		foreach ($floors as &$floor)
-			$floor='Floor '.$floor;
-		
-		// Load floor images
-		$floorImages = array();
-		foreach ($model->floors as $floorModel) {
-			if ($floorModel->level == 1)
-				$class='floor-image display';
-			else {
-				$class='floor-image';
-			}
-			$floorImages[] = CHtml::image(
-				Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image,
-				$model->name.' - Floor '.$floorModel->level,
-				array(
-					'class'=>$class,
-					'id'=>'floor_'.$floorModel->id.'_map',
-				)
-			);
-		}
-		
-		// Create Javascript for Floor image preloading
 		$floorImageJs = '';
-		foreach ($floorImages as $image)
-			$floorImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
-
-		
-		// Load rooms for first floor
-		$rooms = Floor::Model()->with('rooms')->findByAttributes(array('level'=>'1','building_id'=>$id),array('order'=>'rooms.number ASC'));
-		$rooms = $rooms->rooms;
-		
-		// Load room images
-		$roomImages = array();
-		foreach($rooms as $room)
-			$roomImages[] = CHtml::image(
-				Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image,
-				$model->name.' - Floor '.$room->floor->level.' - '.$room->number,
-				array(
-					'class'=>'room-image',
-					'id'=>'room_'.$room->id.'_map',
-				)
-			);
-		// Create JavaScript for Room image preloading
+		$rooms = array(new Room);
 		$roomImageJs = '';
-		foreach($roomImages as $image)
-			$roomImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";		
+		if ($floors)
+		{
+			foreach ($floors as &$floor)
+				$floor='Floor '.$floor;
+		
+			// Load floor images
+			$floorImages = array();
+			foreach ($model->floors as $floorModel) {
+				if ($floorModel->level == 1)
+					$class='floor-image display';
+				else {
+					$class='floor-image';
+				}
+				$floorImages[] = CHtml::image(
+					Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image,
+					$model->name.' - Floor '.$floorModel->level,
+					array(
+						'class'=>$class,
+						'id'=>'floor_'.$floorModel->id.'_map',
+					)
+				);
+			}
+			
+			// Create Javascript for Floor image preloading
+			$floorImageJs = '';
+			foreach ($floorImages as $image)
+				$floorImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
+	
+			
+			// Load rooms for first floor
+			$rooms = Floor::Model()->with('rooms')->findByAttributes(array('level'=>'1','building_id'=>$id),array('order'=>'rooms.number ASC'));
+			$rooms = $rooms->rooms;
+			
+			// Load room images
+			$roomImages = array();
+			foreach($rooms as $room)
+				$roomImages[] = CHtml::image(
+					Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image,
+					$model->name.' - Floor '.$room->floor->level.' - '.$room->number,
+					array(
+						'class'=>'room-image',
+						'id'=>'room_'.$room->id.'_map',
+					)
+				);
+			// Create JavaScript for Room image preloading
+			$roomImageJs = '';
+			foreach($roomImages as $image)
+				$roomImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
+		}	
 
 		$this->render('view',array(
 			'model'=>$model,
@@ -307,6 +313,7 @@ class BuildingController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		$this->layout='//layouts/column2';
 		if (!Yii::app()->user->checkAccess('manageBuilding', Yii::app()->user->id))
 		{
 			throw new CHttpException(403,'You are not authorized to perform this action.');

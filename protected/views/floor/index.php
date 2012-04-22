@@ -1,4 +1,5 @@
 <?php
+$this->pageTitle = 'Floors | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Floors',
 );
