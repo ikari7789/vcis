@@ -149,10 +149,7 @@ class Building extends ActiveRecordBase
 					// resize image
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
-					if ($img->width > $img->height)
-						$img->resizeToWidth(582);
-					else
-						$img->resizeToHeight(322);
+					$img->resizeToWidth(582);
 					$img->save($file);	
 					
 					// Save new filename to record

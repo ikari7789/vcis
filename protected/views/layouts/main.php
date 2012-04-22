@@ -12,7 +12,7 @@
 		 More info: h5bp.com/i/378 -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-	<title>VCIS</title>
+	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 	<meta name="description" content="">
 
 	<!-- Mobile viewport optimized: h5bp.com/viewport -->
@@ -20,9 +20,9 @@
 
 	<!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
+	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/reset.css">
 	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css">
-	<!-- <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/reset.css" /> -->
-	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/default.css" />
+	<link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/default.css">
 
 	<!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
 
@@ -42,10 +42,10 @@
 				<a href="http://www.uww.edu/registrar/index.php"><img src="<?php echo Yii::app()->request->baseUrl; ?>/images/registrar_logo.png" alt="Registrar's Office" /></a>
 			</div>
 			<div id="header-content">
-				<!-- <?php echo CHtml::beginForm('#', 'get', array('id'=>'search')); ?>
+				<?php /* <?php echo CHtml::beginForm('#', 'get', array('id'=>'search')); ?>
 					<?php echo CHtml::textField('terms'); ?>
 					<?php echo CHtml::button('Search'); ?>
-			</form> -->
+			</form> */ ?>
 				<?php $this->widget('zii.widgets.CMenu', array(
 					'items'=>array(
 						array('label'=>'Administrative Tools', 'url'=>array('admin/index'), 'visible'=>!Yii::app()->user->isGuest), //, 'visible'=>!Yii::app()->user->isGuest),
@@ -57,20 +57,21 @@
 					'id'=>'main-nav',
 				)); ?>
 			</div>
-			<?php if(isset($this->breadcrumbs)):?>
-				<?php $this->widget('zii.widgets.CBreadcrumbs', array(
-					'links'=>$this->breadcrumbs,
-					'encodeLabel'=>false,
-				)); ?><!-- breadcrumbs -->
-			<?php endif ?>
 		</header>
-		<div role="main" class="clearfix">
-			<?php if (!Yii::app()->db): ?>
+		<?php //if(isset($this->breadcrumbs)):?>
+			<?php $this->widget('zii.widgets.CBreadcrumbs', array(
+				'links'=>$this->breadcrumbs,
+				'homeLink'=>CHtml::link('VCIS', array('site/index')),
+				'encodeLabel'=>false,
+			)); ?><!-- breadcrumbs -->
+		<?php //endif ?>
+		<?php if (!Yii::app()->db): ?>
+			<div class="contentwrapper">
 				Sorry, but there wasn't a database found.
-			<?php else: ?>
-				<?php echo $content; ?>
-			<?php endif; ?>
-		</div>
+			</div>
+		<?php else: ?>
+			<?php echo $content; ?>
+		<?php endif; ?>
 		<footer>
 
 		</footer>

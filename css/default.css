@@ -1,24 +1,92 @@
 * {
-	font-family: Corbel, Arial;
-	font-size: 16px;
+	font-family: Corbel, Helvetica, Arial;
+	font-size: 14px;
 }
+
+h1 {
+    display: inline-block;
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
 img {
+    float: none;
 	border: 2px solid black;
-	/*width: 425px;
-	height: 318px;*/
+}
+
+ul {
+    margin: 0;
+    padding: 0;
 }
 
 #page {
-	margin: 10px auto;
-	width: 800px;
+    width: 840px; /*Width of main container*/
+    margin: 10px auto; /*Center container on page*/
 }
 
 header {
-	height: 100px;
+    position: relative;
+    width: 100%;
+	height: 72px;
+	padding: 0 0 10px;
 }
 
+div.content {
+    width: 100%;
+    display: block;
+}
+
+div.content-header {
+    position: relative;
+    display: block;
+    padding: 10px;
+    width: 820px;
+}
+
+div.content-header div {
+    padding: 0 0 5px;
+}
+
+div.content-header div.admin {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+div.left-column {
+    display: inline-block;
+    float: left;
+    width: 214px;
+    padding: 10px;
+}
+
+div.left-column.room {
+    width: 428px;
+}
+
+div.right-column {
+    display: inline-block;
+    float: left;
+    width: 586px;
+    padding: 10px;
+}
+
+div.right-column.room {
+    width: 372px;
+}
+
+
+/* Header styling */
 #logo {
-	float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 #logo img {
@@ -26,7 +94,9 @@ header {
 }
 
 #header-content {
-	float: right;
+	position: absolute;
+	right: 0;
+	bottom: 32px;
 }
 
 #search {
@@ -35,9 +105,6 @@ header {
 }
 
 #main-nav {
-	position: relative;
-	right: -30px;
-	line-height: 16px;
 	list-style: none;
 }
 
@@ -46,9 +113,8 @@ header {
 }
 
 #main-nav li {
+    line-height: 16px;
 	border-left: 1px solid black;
-	position: relative;
-	top: -15px;
 	float: left;
 	padding: 0 5px;
 	margin: 5px 0;
@@ -59,7 +125,6 @@ header {
 }
 
 .breadcrumbs {
-	clear: both;
 }
 .breadcrumbs, .breadcrumbs a, .breadcrumbs span {
 	font-size: 12px;
@@ -78,25 +143,20 @@ header {
 	color: red;
 }
 
-.building-image, .floor-image, .room-image {
-	position: absolute;
-	top:0;
-	left:0;
+div.map-images {
+    position: relative;
+    text-align: center;
+}
+
+.map-image, .building-image, .floor-image, .room-image {
+    margin: 0 auto;
 	display:none;
 }
 
 .display {
 	display: block;
 }
-div.leftcol {
-	float: left;
-	width: 250px;
-}
-div.rightcol {
-	position: relative;
-	float: right;
-	width: 550px;
-}
+
 div.left-room {
 	float: left;
 	width: 450px;
@@ -106,20 +166,59 @@ div.right-room {
 	width: 350px;
 }
 
-ul.room-details li {
+select#floors {
+    display: block;
+    margin: 5px 0 10px;
+}
+
+img.front-image {
+    margin-bottom: 25px;
+}
+
+div.details {
+    padding: 0 0 10px;
+}
+
+h3.category {
+    background-color: #501D82;
+    text-align: center;
+    padding: 5px;
+    color: white;
+}
+ul.room-features {
+    overflow: hidden;
+    border-left: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-right: 1px solid grey;
+    margin: 0 0 10px;
+    width: 370px;
+}
+ul.room-features li:nth-child(odd)  {
+    background-color: #dacfe5;
+}
+ul.room-features li{
+    vertical-align: middle;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    display: block;
 	list-style: none;
-	border-bottom: 1px solid black;
+	border: none;
 }
-ul.room-details li span.feature {
-	display: inline-block;
-	width: 200px;
+
+ul.room-features li div {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
-ul.room-details li span.details {
-	display: inline-block;
-	width: 200px;
+div.feature {
+    font-weight: bold;
+    width: 170px;
 }
-ul.room-details li span.verified {
-	color: green;
-	font-size: 10px;
-	display: inline-block;
+div.details {
+}
+button#add-list {
+    margin-top: 5px;
+    float: right;
 }

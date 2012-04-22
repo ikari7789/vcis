@@ -2,6 +2,7 @@
 
 class SiteController extends Controller
 {
+	
 	/**
 	 * Declares class-based actions.
 	 */
@@ -29,14 +30,14 @@ class SiteController extends Controller
 	{
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$buildings = Building::model()->findAll();
+		$buildings = Building::model()->findAll(array('order'=>'name ASC'));
 		$buildingImages = array();
 		foreach ($buildings as $building)
 			$buildingImages[] = CHtml::image(
 				Yii::app()->request->baseUrl.'/images/buildings/'.$building->map_image,
 				'University of Wisconsin - Whitewater Campus Map - '.$building->name,
 				array(
-					'class'=>'building-image',
+					'class'=>'map-image',
 					'id'=>'building_'.$building->id.'_map',
 				)
 			);
