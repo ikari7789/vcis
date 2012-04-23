@@ -69,7 +69,9 @@ $this->breadcrumbs=array(
 	$('a#email').on('click', function() {
 		var subject = 'My favorite rooms';
 		var body = '';
+		count = 1;
 		$('#list li').each(function() {
+			body += count+'%0D';
 			$(this).find('div').each(function() {
 				body += $(this).text()
 				if ($(this).has('a').length)
@@ -77,26 +79,36 @@ $this->breadcrumbs=array(
 				body += '%0D';
 			});
 			body += '%0D';
+			count++;
 		});
 		$(this).attr('href','mailto:?subject='+subject+'&body='+body);
 	});
 "); ?>
-<h1>Room List</h1><?php echo CHtml::htmlButton('Clear List',array('class'=>'clear')); ?>
 
-<?php if (count($rooms) == 0): ?>
-	<div class="error">No rooms currently in list</div>
-<?php else: ?>
-	<ul id="list">
+<div class="content-header">
+	<h1>Room List</h1>
+	<div class="information">Click and drag to reorder items.</div>
+</div>
+
+<ol id="list">
+	<?php if (count($rooms) == 0): ?>
+		<li>
+			<div class="error">No rooms currently in list</div>
+		</li>
+	<?php else: ?>
 		<?php foreach($rooms as $room): ?>
-			<li>
+			<li class="sortable">
 				<?php echo CHtml::hiddenField('room_'.$room->id, $room->id); ?>
-				<div>Room: <?php echo CHtml::link($room->number, array('room/view','id'=>$room->id)); ?></div>
-				<div>Building: <?php echo $room->floor->building->name; ?></div>
-				<div>Floor: <?php echo $room->floor->level; ?></div>
-				<?php echo CHtml::htmlButton('Remove', array('class'=>'remove')); ?>
+				<?php echo CHtml::htmlButton('X', array('class'=>'remove')); ?>
+				<div class="room">Room: <?php echo CHtml::link($room->number, array('room/view','id'=>$room->id)); ?></div>
+				<div class="building">Building: <?php echo $room->floor->building->name; ?></div>
+				<div class="floor">Floor: <?php echo $room->floor->level; ?></div>
 			</li>
 		<?php endforeach; ?>
-	</ul>
+	<?php endif; ?>
+</ol>
+<div class="list-tools">
 	<?php echo CHtml::link('Email this list', '#', array('id'=>'email')); ?>
-<?php endif; ?>
-<div class="warning">Warning: This list is only temporary and will be deleted when you leave the site.</div>
+	<?php echo CHtml::htmlButton('Clear List',array('class'=>'clear')); ?>
+</div>
+<span class="warning">Warning: This list is only temporary and will be deleted when you leave the site.</span>

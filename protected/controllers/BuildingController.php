@@ -62,16 +62,11 @@ class BuildingController extends Controller
 			// Load floor images
 			$floorImages = array();
 			foreach ($model->floors as $floorModel) {
-				if ($floorModel->level == 1)
-					$class='floor-image display';
-				else {
-					$class='floor-image';
-				}
 				$floorImages[] = CHtml::image(
 					Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image,
 					$model->name.' - Floor '.$floorModel->level,
 					array(
-						'class'=>$class,
+						'class'=>'floor-image',
 						'id'=>'floor_'.$floorModel->id.'_map',
 					)
 				);
@@ -102,6 +97,17 @@ class BuildingController extends Controller
 			$roomImageJs = '';
 			foreach($roomImages as $image)
 				$roomImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
+			
+			$streetImageJs = '';
+			$image = CHtml::image(
+				Yii::app()->request->baseUrl.'/images/buildings/'.$model->street_image,
+				$model->name,
+				array(
+					'class'=>'street-image display',
+					'id'=>'building_'.$model->id.'_street',
+				)
+			);
+			$streetImageJs="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
 		}	
 
 		$this->render('view',array(
@@ -110,6 +116,7 @@ class BuildingController extends Controller
 			'floorImageJs'=>$floorImageJs,
 			'rooms'=>$rooms,
 			'roomImageJs'=>$roomImageJs,
+			'streetImageJs'=>$streetImageJs,
 		));
 	}
 
@@ -133,6 +140,7 @@ class BuildingController extends Controller
 		{
 			$model->attributes=$_POST['Building'];
 			$model->map_image = CUploadedFile::getInstance($model,'map_image');
+			$model->street_image = CUploadedFile::getInstance($model,'street_image');
 			if($model->save()) {
 				
 				// Create floors and link to building				
@@ -210,6 +218,7 @@ class BuildingController extends Controller
 		if(isset($_POST['Building']))
 		{
 			$old_map_image = $model->map_image;
+			$old_street_image = $model->street_image;
 			$model->attributes=$_POST['Building'];
 			
 			$new_map_image = CUploadedFile::getInstance($model, 'map_image');
@@ -217,6 +226,12 @@ class BuildingController extends Controller
 				$model->map_image = $new_map_image;
 			else
 				$model->map_image = $old_map_image;
+			
+			$new_street_image = CUploadedFile::getInstance($model, 'street_image');
+			if (is_object($new_street_image) && get_class($new_street_image)==='CUploadedFile')
+				$model->street_image = $new_street_image;
+			else
+				$model->street_image = $old_street_image;
 
 			if($model->save()) {
 				

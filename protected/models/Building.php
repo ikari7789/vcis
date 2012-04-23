@@ -100,7 +100,7 @@ class Building extends ActiveRecordBase
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		//$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('map_image',$this->map_image,true);
 		$criteria->compare('street_image',$this->street_image,true);
@@ -108,6 +108,8 @@ class Building extends ActiveRecordBase
 		$criteria->compare('update_time',$this->update_time,true);
 		$criteria->compare('create_user_id',$this->create_user_id);
 		$criteria->compare('update_user_id',$this->update_user_id);
+		
+		$criteria->order='name ASC';
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -126,42 +128,77 @@ class Building extends ActiveRecordBase
 
 	protected function afterSave() {
 		Yii::trace('Begin','Building::afterSave');
+		
+		// Define save directory
+		$baseDir = Yii::getPathOfAlias('siteDir');
+		$uploadDir = $baseDir.'/images/buildings/';
+		Yii::trace('Image save location: '.$uploadDir,'Building::afterSave');
+		$update = false;
 
 		// Make sure the image is an uploaded image, otherwise leave image alone
 		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
-				Yii::trace('CUploadedFile object found.','Building::afterSave');
-				
-				// Define save directory
-				$baseDir = Yii::getPathOfAlias('siteDir');
-				$uploadDir = $baseDir.'/images/buildings/';
-				Yii::trace('Save location: '.$uploadDir,'Building::afterSave');
+				Yii::trace('Map Image: CUploadedFile object found.','Room::afterSave');
 				
 				// Define filename
 				$newfname = $this->id.'_map.'.$this->map_image->extensionName;
-				Yii::trace('New filename: '.$newfname,'Building::afterSave');
+				Yii::trace('Map Image: New filename: '.$newfname,'Building::afterSave');
 				
-				Yii::trace('Full filename + directory: '.$uploadDir.$newfname,'Building::afterSave');
-				
+				Yii::trace('Map Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
 				// Save file
 				if ($this->map_image->saveAs($uploadDir.$newfname)) {
-					Yii::trace('File saved successfully.','Building::afterSave');
+					$this->map_image = $newfname;
 					
 					// resize image
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
-					$img->resizeToWidth(582);
+					if ($img->width > 582)
+						$img->resizeToWidth(582);
 					$img->save($file);	
 					
-					// Save new filename to record
-					$this->map_image = $newfname;
-					if ($this->isNewRecord)
-						$this->isNewRecord = false;
-					$this->update();
+					$update = true;
+					Yii::trace('Map Image: File saved successfully.','Building::afterSave');
 				} else {
-					Yii::trace('Error in saving file.','Building::afterSave');
+					Yii::trace('Map Image: Error in saving file.','Building::afterSave');
 				}
 		}
-		Yii::trace('End','Building::afterSave');
+		
+
+		// Check street image
+		if (is_object($this->street_image) && get_class($this->street_image)==='CUploadedFile') {
+				Yii::trace('Street Image: CUploadedFile object found.','Building::afterSave');
+				
+				// Define filename
+				$newfname = $this->id.'_street.'.$this->street_image->extensionName;
+				Yii::trace('Street Image: New filename: '.$newfname,'Building::afterSave');
+				
+				Yii::trace('Street Image: Full filename + directory: '.$uploadDir.$newfname,'Building::afterSave');
+				
+				// Save file
+				if ($this->street_image->saveAs($uploadDir.$newfname)) {
+					$this->street_image = $newfname;
+					
+					// resize image
+					$file = $uploadDir.$newfname;
+					$img = Yii::app()->simpleImage->load($file);
+					if ($img->width > 582)
+						$img->resizeToWidth(582);
+					$img->save($file);	
+					
+					$update = true;
+					Yii::trace('Back Image: File saved successfully.','Building::afterSave');
+				} else {
+					Yii::trace('Back Image: Error in saving file.','Building::afterSave');
+				}
+		}
+		
+		// Save new filename to record
+		if ($update) {
+			if ($this->isNewRecord)
+				$this->isNewRecord = false;
+			$this->update();
+		}
+		
+		Yii::trace('End','Building::afterSave');;
 		return parent::afterSave();
 	}
 	
@@ -175,12 +212,21 @@ class Building extends ActiveRecordBase
 		Yii::trace('Image save location: '.$deleteDir,'Building::afterSave');
 		
 		// Delete map_image
-		if (file_exists($deleteDir.$this->_oldValues['map_image']))
+		if (!is_dir($deleteDir.$this->_oldValues['map_image']) && file_exists($deleteDir.$this->_oldValues['map_image']))
 		{
 			if (unlink($deleteDir.$this->_oldValues['map_image']))
 				Yii::trace($deleteDir.$this->_oldValues['map_image'].' deleted','Building::afterDelete');
 			else
 				Yii::trace('Error in deleting: '.$deleteDir.$this->_oldValues['map_image'],'Building::afterDelete');
+		}
+
+		// Delete street_image
+		if (!is_dir($deleteDir.$this->_oldValues['street_image']) && file_exists($deleteDir.$this->_oldValues['street_image']))
+		{
+			if (unlink($deleteDir.$this->_oldValues['street_image']))
+				Yii::trace($deleteDir.$this->_oldValues['street_image'].' deleted','Building::afterDelete');
+			else
+				Yii::trace('Error in deleting: '.$deleteDir.$this->_oldValues['street_image'],'Building::afterDelete');
 		}
 		
 		unset($this->_oldValues);

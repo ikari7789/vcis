@@ -54,8 +54,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'email',
 		'username',
+		'email',
 		'last_login_time',
 		/*
 		'create_time',

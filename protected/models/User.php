@@ -136,7 +136,7 @@ class User extends ActiveRecordBase
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		//$criteria->compare('id',$this->id);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('username',$this->username,true);
 		$criteria->compare('password',$this->password,true);
@@ -145,6 +145,8 @@ class User extends ActiveRecordBase
 		$criteria->compare('update_time',$this->update_time,true);
 		$criteria->compare('create_user_id',$this->create_user_id);
 		$criteria->compare('update_user_id',$this->update_user_id);
+		
+		$criteria->order='username ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

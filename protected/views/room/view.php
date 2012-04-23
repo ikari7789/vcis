@@ -14,7 +14,7 @@ $this->menu=array(
 	array('label'=>'Manage Room', 'url'=>array('admin')),
 );
 ?>
-
+<?php echo $model->floor->level; ?>
 <?php Yii::app()->clientScript->registerScript('room',"
 	$(document).ready(function() {
 		// add to list code

@@ -26,6 +26,8 @@
 class Room extends ActiveRecordBase
 {
 	private $_oldValues = array();
+	public $building_name;
+	public $floor_level;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -61,7 +63,7 @@ class Room extends ActiveRecordBase
 			array('description','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
+			array('id, building_name, floor_level, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -74,8 +76,9 @@ class Room extends ActiveRecordBase
 		// class name for the relations automatically generated below.
 		return array(
 			'floor' => array(self::BELONGS_TO, 'Floor', 'floor_id'),
-			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
-			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
+			'building' => array(self::HAS_ONE, 'Building', array('building_id'=>'id'), 'through'=>'floor'),
+			'createUser' => array(self::HAS_ONE, 'User', 'create_user_id'),
+			'updateUser' => array(self::HAS_ONE, 'User', 'update_user_id'),
 			'features' => array(self::MANY_MANY, 'Feature', 'room_feature(room_id, feature_id)'),
 			'room_features' => array(self::HAS_MANY, 'RoomFeature', 'room_id'),
 		);
@@ -110,24 +113,43 @@ class Room extends ActiveRecordBase
 	{
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
-
 		$criteria=new CDbCriteria;
+		$criteria->with = array('floor', 'building');
 
-		$criteria->compare('id',$this->id);
+		//$criteria->compare('id',$this->id);
+		$criteria->compare('building.name',$this->building_name,true);
+		$criteria->compare('floor.level',$this->floor_level,true);
 		$criteria->compare('number',$this->number,true);
 		$criteria->compare('front_image',$this->front_image,true);
 		$criteria->compare('back_image',$this->back_image,true);
 		$criteria->compare('map_image',$this->map_image,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('description',$this->description,true);
-		$criteria->compare('floor_id',$this->floor_id);
+		$criteria->compare('floor.level',$this->floor->level);
 		$criteria->compare('create_time',$this->create_time,true);
 		$criteria->compare('update_time',$this->update_time,true);
 		$criteria->compare('create_user_id',$this->create_user_id);
 		$criteria->compare('update_user_id',$this->update_user_id);
+		
+		$criteria->order='building.name ASC, floor.level ASC, t.number ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'attributes'=>array(
+					'building_name'=>array(
+						'asc'=>'building.name',
+						'desc'=>'building.name DESC',
+						'label'=>'Building',
+					),
+					'floor_level'=>array(
+						'asc'=>'floor.level',
+						'desc'=>'floor.level DESC',
+						'label'=>'Floor',
+					),
+					'*',
+				),
+			),
 		));
 	}
 	
@@ -167,7 +189,8 @@ class Room extends ActiveRecordBase
 					// resize image
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
-					$img->resizeToWidth(582);
+					if ($img->width > 582)
+						$img->resizeToWidth(582);
 					$img->save($file);	
 					
 					$update = true;
@@ -197,10 +220,8 @@ class Room extends ActiveRecordBase
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
 					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
-					if ($img->width > $img->height)
+					if ($img->width > 425)
 						$img->resizeToWidth(425);
-					else
-						$img->resizeToHeight(318);
 					$img->save($file);	
 					
 					$update = true;
@@ -230,10 +251,8 @@ class Room extends ActiveRecordBase
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
 					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
-					if ($img->width > $img->height)
+					if ($img->width > 425)
 						$img->resizeToWidth(425);
-					else
-						$img->resizeToHeight(318);
 					$img->save($file);
 					
 					$update = true;
@@ -265,7 +284,7 @@ class Room extends ActiveRecordBase
 		
 		// Delete map_image
 		Yii::trace('Attempting to delete: '.$deleteDir.$this->_oldValues['map_image'],'Room::afterDelete');
-		if (file_exists($deleteDir.$this->_oldValues['map_image']))
+		if (!is_dir($deleteDir.$this->_oldValues['map_image']) && file_exists($deleteDir.$this->_oldValues['map_image']))
 		{
 			if (unlink($deleteDir.$this->_oldValues['map_image']))
 				Yii::trace($deleteDir.$this->_oldValues['map_image'].' deleted','Room::afterDelete');
@@ -275,7 +294,7 @@ class Room extends ActiveRecordBase
 		
 		// Delete front_image
 		Yii::trace('Attempting to delete: '.$deleteDir.$this->_oldValues['front_image'],'Room::afterDelete');
-		if (file_exists($deleteDir.$this->_oldValues['front_image']))
+		if (!is_dir($deleteDir.$this->_oldValues['front_image']) && file_exists($deleteDir.$this->_oldValues['front_image']))
 		{
 			if (unlink($deleteDir.$this->_oldValues['front_image']))
 				Yii::trace($deleteDir.$this->_oldValues['front_image'].' deleted','Room::afterDelete');
@@ -287,7 +306,7 @@ class Room extends ActiveRecordBase
 		$fileExt = substr($this->_oldValues['front_image'],-3);
 		$largeFile = substr($this->_oldValues['front_image'],0,-4).'_large.'.$fileExt;
 		Yii::trace('Attempting to delete: '.$deleteDir.$largeFile,'Room::afterDelete');
-		if (file_exists($deleteDir.$largeFile))
+		if (!is_dir($deleteDir.$largeFile) && file_exists($deleteDir.$largeFile))
 		{
 			if (unlink($deleteDir.$largeFile))
 				Yii::trace($deleteDir.$largeFile.' deleted','Room::afterDelete');
@@ -297,7 +316,7 @@ class Room extends ActiveRecordBase
 
 		// Delete back_image
 		Yii::trace('Attempting to delete: '.$deleteDir.$this->_oldValues['back_image'],'Room::afterDelete');
-		if (file_exists($deleteDir.$this->_oldValues['back_image']))
+		if (!is_dir($deleteDir.$this->_oldValues['back_image']) && file_exists($deleteDir.$this->_oldValues['back_image']))
 		{
 			if (unlink($deleteDir.$this->_oldValues['back_image']))
 				Yii::trace($deleteDir.$this->_oldValues['back_image'].' deleted','Room::afterDelete');
@@ -309,7 +328,7 @@ class Room extends ActiveRecordBase
 		$fileExt = substr($this->_oldValues['back_image'],-3);
 		$largeFile = substr($this->_oldValues['back_image'],0,-4).'_large.'.$fileExt;
 		Yii::trace('Attempting to delete: '.$deleteDir.$largeFile,'Room::afterDelete');
-		if (file_exists($deleteDir.$largeFile))
+		if (!is_dir($deleteDir.$largeFile) && file_exists($deleteDir.$largeFile))
 		{
 			if (unlink($deleteDir.$largeFile))
 				Yii::trace($deleteDir.$largeFile.' deleted','Room::afterDelete');

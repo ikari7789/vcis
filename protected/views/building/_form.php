@@ -30,6 +30,18 @@
 		<?php echo $form->fileField($model,'map_image',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'map_image'); ?>
 	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'street_image'); ?>
+		<?php
+			$baseDir = Yii::getPathOfAlias('siteDir');
+			$uploadDir = $baseDir.'/images/buildings/';
+			if ($model->street_image != '' && file_exists($uploadDir.$model->street_image))
+				echo CHtml::image(Yii::app()->request->baseUrl.'/images/buildings/'.$model->street_image);
+		?>
+		<?php echo $form->fileField($model,'street_image',array('size'=>60,'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'street_image'); ?>
+	</div>
     
 	<div class="row">
 		<?php echo CHtml::label('Number of Floors','floorNum'); ?>

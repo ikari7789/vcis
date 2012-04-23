@@ -56,24 +56,24 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'columns'=>array(
 		//'id',
 		array(
-			'name'=>'floor.building_id',
-			'value'=>'$data->floor->building->name',
+			'name'=>'building_name',
+			'value'=>'$data->building->name',
 		),
 		array(
-			'name'=>'floor_id',
+			'name'=>'floor_level',
 			'value'=>'$data->floor->level',
 		),
 		'number',
 		//'front_image',
 		//'back_image',
 		//'map_image',
-		'status',
 		//'description',
 		'create_time',
 		'update_time',
+		'status',
 		array(
 			'class'=>'CButtonColumn',
 			'template'=>$template,
-		),
+		)
 	),
 )); ?>

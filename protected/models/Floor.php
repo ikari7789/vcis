@@ -140,7 +140,8 @@ class Floor extends ActiveRecordBase
 					// resize image
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
-					$img->resizeToWidth(582);
+					if ($img->width > 582)
+						$img->resizeToWidth(582);
 					$img->save($file);					
 					
 					// Save new filename to record
@@ -166,7 +167,7 @@ class Floor extends ActiveRecordBase
 		Yii::trace('Image save location: '.$deleteDir,'Floor::afterSave');
 		
 		// Delete map_image
-		if (file_exists($deleteDir.$this->_oldValues['map_image']))
+		if (!is_dir($deleteDir.$this->_oldValues['map_image']) && file_exists($deleteDir.$this->_oldValues['map_image']))
 		{
 			if (unlink($deleteDir.$this->_oldValues['map_image']))
 				Yii::trace($deleteDir.$this->_oldValues['map_image'].' deleted','Floor::afterDelete');
