@@ -8,6 +8,12 @@
 	),
 )); 
 
+$this->widget('application.extensions.fancybox.EFancyBox', array(
+    'target'=>'a.fancy',
+    'config'=>array(),
+    )
+);
+
 $baseDir = Yii::getPathOfAlias('siteDir');
 $uploadDir = $baseDir.'/images/rooms/';
 $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
@@ -69,7 +75,16 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 		<?php echo $form->labelEx($model,'front_image'); ?>
 		<?php
 			if (file_exists($uploadDir.$model->front_image) && !empty($model->front_image))
-				echo CHtml::image($imageUrl.$model->front_image);
+				echo CHtml::link(
+					CHtml::image(
+						$imageUrl.$model->front_image,
+						'Front Image'
+					),
+					Yii::app()->request->baseUrl.$imageUrl.substr($model->front_image,0,-4).'_large'.substr($model->front_image,-4),
+					array(
+						'class'=>'fancy'
+					)
+				);
 		?>
 		<?php echo $form->fileField($model,'front_image',array('size'=>60,'maxlength'=>256)); ?>
 		<?php echo $form->error($model,'front_image'); ?>
@@ -79,7 +94,16 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 		<?php echo $form->labelEx($model,'back_image'); ?>
 		<?php
 			if (file_exists($uploadDir.$model->back_image) && !empty($model->back_image))
-				echo CHtml::image($imageUrl.$model->back_image);
+				echo CHtml::link(
+					CHtml::image(
+						$imageUrl.$model->back_image,
+						'Back Image'
+					),
+					Yii::app()->request->baseUrl.$imageUrl.substr($model->back_image,0,-4).'_large'.substr($model->back_image,-4),
+					array(
+						'class'=>'fancy'
+					)
+				);
 		?>
 		<?php echo $form->fileField($model,'back_image',array('size'=>60,'maxlength'=>256)); ?>
 		<?php echo $form->error($model,'back_image'); ?>
@@ -89,7 +113,16 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 		<?php echo $form->labelEx($model,'map_image'); ?>
 		<?php
 			if (file_exists($uploadDir.$model->map_image) && !empty($model->map_image))
-				echo CHtml::image($imageUrl.$model->map_image);
+				echo CHtml::link(
+					CHtml::image(
+						$imageUrl.$model->map_image,
+						'Map Image'
+					),
+					Yii::app()->request->baseUrl.$imageUrl.$model->map_image,
+					array(
+						'class'=>'fancy'
+					)
+				);
 		?>
 		<?php echo $form->fileField($model,'map_image',array('size'=>60,'maxlength'=>256)); ?>
 		<?php echo $form->error($model,'map_image'); ?>

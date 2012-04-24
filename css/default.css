@@ -105,6 +105,10 @@ div.left-column.room {
     width: 428px;
 }
 
+div.left-column.admin {
+    width: 700px;
+}
+
 div.right-column {
     display: inline-block;
     float: left;
@@ -114,6 +118,10 @@ div.right-column {
 
 div.right-column.room {
     width: 372px;
+}
+
+div.right-column.admin {
+    width: 100px;
 }
 
 
@@ -209,6 +217,15 @@ img.front-image {
     margin-bottom: 25px;
 }
 
+.images h2, .features h2 {
+    display: inline-block;
+    margin-right: 5px;
+}
+.images span.info, .features span.info {
+    font-style: italic;
+    font-size: 12px;
+}
+
 div.details {
     padding: 0 0 10px;
 }
@@ -218,12 +235,15 @@ h3.category {
     text-align: center;
     padding: 5px;
     color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 ul.room-features {
-    overflow: hidden;
     border-left: 1px solid grey;
     border-bottom: 1px solid grey;
     border-right: 1px solid grey;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     margin: 0 0 10px;
     width: 370px;
 }
@@ -249,6 +269,22 @@ ul.room-features li div {
 div.feature {
     font-weight: bold;
     width: 170px;
+    position:relative;
+}
+
+div.feature:hover span.description {
+    display: block;
+}
+span.description {
+    display: none;
+    padding: 3px;
+    position: absolute;
+    top: 24px;
+    width: 352px;
+    border: 1px solid black;
+    background-color: #fffca0;
+    z-index: 100;
+    font-weight: normal;
 }
 div.details {
 }
@@ -289,3 +325,19 @@ div.rooms {
     display: none;
 }
 
+.form {
+    padding: 10px;
+}
+
+.form p.note {
+    display: inline-block;
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+    box-shadow: 1px 1px 1px;
+}
+
+.form img {
+    width: 50px;
+}

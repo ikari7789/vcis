@@ -6,6 +6,12 @@ $this->breadcrumbs=array(
 	$model->number,
 );
 
+$this->widget('application.extensions.fancybox.EFancyBox', array(
+    'target'=>'a.fancy',
+    'config'=>array(),
+    )
+);
+
 $this->menu=array(
 	//array('label'=>'List Room', 'url'=>array('index')),
 	array('label'=>'Create Room', 'url'=>array('create')),
@@ -14,7 +20,6 @@ $this->menu=array(
 	array('label'=>'Manage Room', 'url'=>array('admin')),
 );
 ?>
-<?php echo $model->floor->level; ?>
 <?php Yii::app()->clientScript->registerScript('room',"
 	$(document).ready(function() {
 		// add to list code
@@ -42,32 +47,56 @@ $this->menu=array(
 </div>
 <div class="left-column room">
 	<div class="images">
-		<h2>Front View</h2>
-		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image, 'Room '.$model->number.' front view', array('class'=>'front-image')); ?>
+		<h2>Front View</h2><span class="info">(Click to view large image.)</span>
+		<?php echo CHtml::link(
+			CHtml::image(
+				Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image,
+				'Room '.$model->number.' front view',
+				array('class'=>'front-image')
+			),
+			Yii::app()->request->baseUrl.'/images/rooms/'.substr($model->front_image,0,-4).'_large'.substr($model->front_image,-4),
+			array('class'=>'fancy')
+		); ?>
+		<?php //echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->front_image, 'Room '.$model->number.' front view', array('class'=>'front-image')); ?>
 		
-		<h2>Back View</h2>
-		<?php echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image, 'Room '.$model->number.' back view', array('class'=>'back-image')); ?>
+		<h2>Back View</h2><span class="info">(Click to view large image.)</span>
+		<?php echo CHtml::link(
+			CHtml::image(
+				Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image,
+				'Room '.$model->number.' back view',
+				array('class'=>'back-image')
+			),
+			Yii::app()->request->baseUrl.'/images/rooms/'.substr($model->back_image,0,-4).'_large'.substr($model->back_image,-4),
+			array('class'=>'fancy')
+		); ?>
+		<?php //echo CHtml::image(Yii::app()->request->baseUrl.'/images/rooms/'.$model->back_image, 'Room '.$model->number.' back view', array('class'=>'back-image')); ?>
 	</div>
 </div>
 <div class="right-column room">
 	<?php echo CHtml::hiddenField('room_id', $model->id); ?>
 	<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
-	<?php if (isset($model->description)): ?>
-		<div class="details">
-			<h2>Room Details</h2>
+	<div class="details">
+		<h2>Room Details</h2>
+		<?php if (empty($model->description)): ?>
+			<p>No specific details for this room.</p>
+		<?php else: ?>
 			<p><?php echo CHtml::encode($model->description); ?></p>
-		</div>
-	<?php endif; ?>
+		<?php endif; ?>
+	</div>
 	<?php if (isset($roomFeatures) && count($roomFeatures) > 0): ?>
 		<div class="features">
-			<h2>Room Features</h2>
+			<h2>Room Features</h2><span class="info">(Hover over feature name for more details.)</span>
 			<?php foreach($roomFeatures as $categoryName => $features): ?>
 				<h3 class="category"><?php echo $categoryName; ?></h3>
 				<ul class="room-features">
 					<?php foreach ($features as $featureName => $feature): ?>
 						<li>
-							<div class="feature"><?php echo $featureName; ?>:</div>
-							<div class="details"><?php echo $feature->details; ?></div>
+							<div class="feature"><?php echo $featureName; ?>:
+								<?php if (!empty($feature['description'])): ?>
+									<span class="description"><?php echo $feature['description']; ?></span>
+								<?php endif; ?>
+							</div>
+							<div class="details"><?php echo $feature['details']->details; ?></div>
 						</li>
 					<?php endforeach; ?>
 				</ul>

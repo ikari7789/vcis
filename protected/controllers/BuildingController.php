@@ -328,7 +328,7 @@ class BuildingController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$this->layout='//layouts/column2';
+		$this->layout='//layouts/column1';
 		if (!Yii::app()->user->checkAccess('manageBuilding', Yii::app()->user->id))
 		{
 			throw new CHttpException(403,'You are not authorized to perform this action.');

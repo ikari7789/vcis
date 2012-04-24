@@ -6,7 +6,7 @@ class RoomController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -45,14 +45,16 @@ class RoomController extends Controller
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
-	{
-		$this->layout = '//layouts/column1';
-		
+	{		
 		$model = $this->loadModel($id);
 		$roomFeatures = array();
 		foreach ($model->room_features as $feature) {
-			$roomFeatures[$feature->feature->category->name][$feature->feature->name] = $feature;
+			$roomFeatures[$feature->feature->category->name][$feature->feature->name]['description'] = $feature->feature->description;
+			$roomFeatures[$feature->feature->category->name][$feature->feature->name]['details'] = $feature;
 		}
+		ksort($roomFeatures);
+		foreach($roomFeatures as &$category)
+			ksort($category);
 		
 		$this->render('view',array(
 			'model'=>$model,
