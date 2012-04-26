@@ -14,12 +14,14 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
     )
 );
 
+Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/form.js', CClientScript::POS_HEAD);
+
 $baseDir = Yii::getPathOfAlias('siteDir');
 $uploadDir = $baseDir.'/images/rooms/';
 $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+	<p class="note">Fields with <span class="required">*</span> are required. Click on images to increase size.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -36,22 +38,24 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 							if (data != "")
 							{
 								jQuery("#floor_row").show();
-								jQuery("#Room_floor_id").removeAttr("disabled");
-								jQuery("#Room_floor_id").append(
-									data
-								);
+								jQuery("#Room_floor_id")
+									.removeAttr("disabled")
+									.find("option").each(function() {
+										$(this).remove();
+									}).end()
+									.append("<option value=\"whatever\">--please select--</option>")
+									.append(data);
+									//alert(data);
 							}
 							else
 							{
 								jQuery("#floor_row").hide();
-								jQuery("#Room_floor_id").attr("disabled", "disabled");
 								jQuery("#Room_floor_id")
-									.show()
-									.find("option")
-									.remove()
-									.end()
-									.append("<option value=\"whatever\">--please select--</option>")
-									.val("");
+									.attr("disabled", "disabled")
+									.find("option").each(function() {
+										$(this).remove();
+									}).end()
+									.append("<option value=\"whatever\">--please select--</option>");
 							}
 						}',
 				)
@@ -155,8 +159,8 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 					}; ?>
 					<?php echo CHtml::label($feature->name, 'RoomFeature_'.$feature->id.'_name'); ?>
 					<?php echo CHtml::textField('RoomFeature['.$feature->id.'][details]', $details); ?>
-					<?php echo CHtml::label('Verified?', 'RoomFeature_'.$feature->id.'_verified'); ?>
-					<?php echo CHtml::checkbox('RoomFeature['.$feature->id.'][verified]', $verified); ?>
+					<?php echo CHtml::label('Update verification?', 'RoomFeature_'.$feature->id.'_verified', array('class'=>'verification')); ?>
+					<?php echo CHtml::checkbox('RoomFeature['.$feature->id.'][verified]', false); ?>
 				</div>
 			<?php } ?>
 		<?php } ?>

@@ -3,8 +3,9 @@ $this->pageTitle = 'Administrative Tools | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'Administrative Tools',
 );?>
+<div class="content-header">
 <h1>Administrative Tools</h1>
-
+</div>
 <?php 
 $this->widget('zii.widgets.CMenu', array(
 	'items'=>array(

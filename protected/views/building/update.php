@@ -1,6 +1,5 @@
 <?php
-$this->pageTitle = 'Update Building: '.$model->name.' | '.Yii::app()->name;
-Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/building-form.js",CClientScript::POS_HEAD); 
+$this->pageTitle = 'Update Building: '.$model->name.' | '.Yii::app()->name; 
 
 $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
@@ -18,6 +17,6 @@ $this->menu=array(
 );
 ?>
 
-<h1>Update Building <?php echo $model->id; ?></h1>
+<h1>Update Building: <?php echo $model->name; ?></h1>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model, 'floors'=>$floors)); ?>

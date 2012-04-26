@@ -1,4 +1,6 @@
 <div class="form">
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl."/js/building-form.js",CClientScript::POS_HEAD); ?>
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/form.js', CClientScript::POS_HEAD); ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'building-form',
@@ -16,7 +18,7 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 
 ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+	<p class="note">Fields with <span class="required">*</span> are required. Click on images to increase size.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 	<?php //echo $form->errorSummary($floors); ?>

@@ -75,7 +75,7 @@ class Room extends ActiveRecordBase
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'floor' => array(self::BELONGS_TO, 'Floor', 'floor_id'),
+			'floor' => array(self::HAS_ONE, 'Floor', array('id'=>'floor_id')),
 			'building' => array(self::HAS_ONE, 'Building', array('building_id'=>'id'), 'through'=>'floor'),
 			'createUser' => array(self::HAS_ONE, 'User', 'create_user_id'),
 			'updateUser' => array(self::HAS_ONE, 'User', 'update_user_id'),
@@ -118,20 +118,19 @@ class Room extends ActiveRecordBase
 
 		//$criteria->compare('id',$this->id);
 		$criteria->compare('building.name',$this->building_name,true);
-		$criteria->compare('floor.level',$this->floor_level,true);
-		$criteria->compare('number',$this->number,true);
-		$criteria->compare('front_image',$this->front_image,true);
-		$criteria->compare('back_image',$this->back_image,true);
-		$criteria->compare('map_image',$this->map_image,true);
-		$criteria->compare('status',$this->status);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('floor.level',$this->floor->level);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('create_user_id',$this->create_user_id);
-		$criteria->compare('update_user_id',$this->update_user_id);
+		$criteria->compare('floor.level',$this->floor_level);
+		$criteria->compare('t.number',$this->number,true);
+		$criteria->compare('t.front_image',$this->front_image,true);
+		$criteria->compare('t.back_image',$this->back_image,true);
+		$criteria->compare('t.map_image',$this->map_image,true);
+		$criteria->compare('t.status',$this->status);
+		$criteria->compare('t.description',$this->description,true);
+		$criteria->compare('t.create_time',$this->create_time,true);
+		$criteria->compare('t.update_time',$this->update_time,true);
+		$criteria->compare('t.create_user_id',$this->create_user_id);
+		$criteria->compare('t.update_user_id',$this->update_user_id);
 		
-		$criteria->order='building.name ASC, floor.level ASC, t.number ASC';
+		$criteria->order='building.name, floor.level, t.number';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -189,7 +188,7 @@ class Room extends ActiveRecordBase
 					// resize image
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
-					if ($img->width > 582)
+					if ($img->getWidth() > 582)
 						$img->resizeToWidth(582);
 					$img->save($file);	
 					
@@ -220,7 +219,7 @@ class Room extends ActiveRecordBase
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
 					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
-					if ($img->width > 425)
+					if ($img->getWidth() > 425)
 						$img->resizeToWidth(425);
 					$img->save($file);	
 					
@@ -251,7 +250,7 @@ class Room extends ActiveRecordBase
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
 					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
-					if ($img->width > 425)
+					if ($img->getWidth() > 425)
 						$img->resizeToWidth(425);
 					$img->save($file);
 					

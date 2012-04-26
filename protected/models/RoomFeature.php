@@ -93,14 +93,14 @@ class RoomFeature extends ActiveRecordBase
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('room_id',$this->room_id);
-		$criteria->compare('feature_id',$this->feature_id);
-		$criteria->compare('details',$this->details,true);
-		$criteria->compare('verification_time',$this->verification_time,true);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('create_user_id',$this->create_user_id);
-		$criteria->compare('update_user_id',$this->update_user_id);
+		$criteria->compare('t.room_id',$this->room_id);
+		$criteria->compare('t.feature_id',$this->feature_id);
+		$criteria->compare('t.details',$this->details,true);
+		$criteria->compare('t.verification_time',$this->verification_time,true);
+		$criteria->compare('t.create_time',$this->create_time,true);
+		$criteria->compare('t.update_time',$this->update_time,true);
+		$criteria->compare('t.create_user_id',$this->create_user_id);
+		$criteria->compare('t.update_user_id',$this->update_user_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -341,3 +341,28 @@ div.rooms {
 .form img {
     width: 50px;
 }
+
+div.status span.title {
+}
+
+div.status {
+    position: absolute;
+    top: 17px;
+    right: 10px;
+    float:right;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+div.status.on {
+    color: green;
+}
+
+div.status.off {
+    color: red;
+}
+
+label.verification {
+    margin-left: 15px;
+    width: auto;
+}

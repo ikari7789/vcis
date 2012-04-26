@@ -46,4 +46,20 @@ class RoomList extends CModel
 	{
 		return array();
 	}
+	
+		
+	/**
+	 * Check if the room list has a specific room.
+	 * @param int $id room id to look for in list
+	 */
+	public function hasRoom($id)
+	{
+		$session = Yii::app()->session;
+		if (!isset($session['list']))
+			$session['list'] = new RoomList;
+		if (in_array($id, $session['list']->_rooms))
+			return true;
+		else
+			return false;
+	}	
 }

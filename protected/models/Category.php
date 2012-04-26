@@ -96,13 +96,13 @@ class Category extends ActiveRecordBase
 		$criteria=new CDbCriteria;
 
 		//$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('create_time',$this->create_time,true);
-		$criteria->compare('update_time',$this->update_time,true);
-		$criteria->compare('create_user_id',$this->create_user_id);
-		$criteria->compare('update_user_id',$this->update_user_id);
+		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.create_time',$this->create_time,true);
+		$criteria->compare('t.update_time',$this->update_time,true);
+		$criteria->compare('t.create_user_id',$this->create_user_id);
+		$criteria->compare('t.update_user_id',$this->update_user_id);
 		
-		$criteria->order='name ASC';
+		$criteria->order='t.name';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

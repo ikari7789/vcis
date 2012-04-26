@@ -22,6 +22,7 @@ $this->menu=array(
 ?>
 <?php Yii::app()->clientScript->registerScript('room',"
 	$(document).ready(function() {
+		
 		// add to list code
 		$('button#add-list').on('click', function() {
 			$.ajax({
@@ -29,7 +30,10 @@ $this->menu=array(
 				url: '".CController::createUrl('list/add')."',
 				data: 'room_id='+$('#room_id').val(),
 				success: function(data) {
-					alert(data);
+					if (data == 'Room added to list' || data == 'Room already in list')
+						$('button#add-list').html('Room in List').attr('disabled','disabled');
+					else
+						alert(data);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					alert('Error saving to list');
@@ -40,10 +44,12 @@ $this->menu=array(
 "); ?>
 
 <div class="content-header">
+	<div class="status<?php echo ($model->status == 1) ? ' on">In operation' : 'off">Out of operation'; ?></div>
 	<h1><?php echo $model->floor->building->name.' - Floor '.$model->floor->level.' - '.$model->number; ?></h1>
 	<?php if (Yii::app()->user->checkAccess('updateRoom', Yii::app()->user->id)): ?>
 			<div class="admin"><?php echo CHtml::link('Update', array('room/update', 'id'=>$model->id)); ?></div>
 	<?php endif; ?>
+	<div><?php echo CHtml::link('Go to UWW Reservations Homepage', 'http://reservations.uww.edu'); ?></div>
 </div>
 <div class="left-column room">
 	<div class="images">
@@ -74,7 +80,11 @@ $this->menu=array(
 </div>
 <div class="right-column room">
 	<?php echo CHtml::hiddenField('room_id', $model->id); ?>
-	<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
+	<?php if (!RoomList::hasRoom($model->id)): ?>
+		<?php echo CHtml::htmlButton('Add to Room List',array('name'=>'add-list','id'=>'add-list')); ?>
+	<?php else: ?>
+		<?php echo CHtml::htmlButton('Room in List',array('name'=>'add-list','id'=>'add-list', 'disabled'=>'disabled')); ?>
+	<?php endif; ?>
 	<div class="details">
 		<h2>Room Details</h2>
 		<?php if (empty($model->description)): ?>

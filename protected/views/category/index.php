@@ -1,7 +1,7 @@
 <?php
 $this->pageTitle = 'Categories | '.Yii::app()->name;
 $this->breadcrumbs=array(
-	'Categories',
+	'Feature Categories',
 );
 
 $this->menu=array(

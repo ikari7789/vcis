@@ -1,4 +1,5 @@
 <div class="form">
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/form.js', CClientScript::POS_HEAD); ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'feature-form',

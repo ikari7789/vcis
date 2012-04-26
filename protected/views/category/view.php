@@ -1,7 +1,7 @@
 <?php
 $this->pageTitle = 'View Category: '.$model->name.' | '.Yii::app()->name;
 $this->breadcrumbs=array(
-	'Categories'=>array('index'),
+	'Feature Categories'=>array('index'),
 	$model->name,
 );
 

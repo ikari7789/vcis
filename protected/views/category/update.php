@@ -4,8 +4,8 @@ $this->breadcrumbs=array(
 	'Administrative Tools'=>array('admin/index'),
 	//'Categories'=>array('index'),
 	//$model->name=>array('view','id'=>$model->id),
-	'Manage Categories'=>array('category/admin'),
-	'Update Category: '.$model->name,
+	'Manage Feature Categories'=>array('category/admin'),
+	'Update Feature Category: '.$model->name,
 );
 
 $this->menu=array(
@@ -16,6 +16,6 @@ $this->menu=array(
 );
 ?>
 
-<h1>Update Category <?php echo $model->id; ?></h1>
+<h1>Update Category: <?php echo $model->name; ?></h1>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
