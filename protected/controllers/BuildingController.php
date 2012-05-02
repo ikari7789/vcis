@@ -68,7 +68,7 @@ class BuildingController extends Controller
 				if (!is_dir($imageLocation) && file_exists($imageLocation))
 					$imageLink = Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image;
 				else
-					$imageLink = Yii::app()->request->baseUrl.'/images/floors/map-default.jpg';
+					$imageLink = Yii::app()->request->baseUrl.'/images/floors/map-default-'.$floorModel->level.'.jpg';
 				
 				$floorImages[] = CHtml::image(
 					$imageLink,
@@ -96,8 +96,14 @@ class BuildingController extends Controller
 				if (!is_dir($imageLocation) && file_exists($imageLocation))
 					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image;
 				else
-					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/map-default.jpg';
-			
+				{
+					$imageLocation = $rootPath['dirname'].'/images/floors/'.$room->floor->map_image;
+					if (!is_dir($imageLocation) && file_exists($imageLocation))
+						$imageLink = Yii::app()->request->baseUrl.'/images/floors/'.$room->floor->map_image;
+					else
+						$imageLink = Yii::app()->request->baseUrl.'/images/floors/map-default-'.$room->floor->level.'.jpg';
+				}
+				
 				$roomImages[] = CHtml::image(
 					$imageLink,
 					$model->name.' - Floor '.$room->floor->level.' - '.$room->number,

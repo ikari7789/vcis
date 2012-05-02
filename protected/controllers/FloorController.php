@@ -50,14 +50,31 @@ class FloorController extends Controller
 			$model = Floor::Model()->with('rooms')->findByPk($_POST['floors'],array('order'=>'rooms.number ASC'));
 			$rootPath = pathinfo(Yii::app()->request->scriptFile);
 			foreach($model->rooms as $room) {
-					
+				
 				$imageLocation = $rootPath['dirname'].'/images/rooms/'.$room->map_image;
 				if (!is_dir($imageLocation) && file_exists($imageLocation))
 					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image;
 				else
-					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/map-default.jpg';
+				{
+					$imageLocation = $rootPath['dirname'].'/images/floors/'.$room->floor->map_image;
+					echo $imageLocation."\n";
+					if (!is_dir($imageLocation) && file_exists($imageLocation))
+						$imageLink = Yii::app()->request->baseUrl.'/images/floors/'.$room->floor->map_image;
+					else
+						$imageLink = Yii::app()->request->baseUrl.'/images/floors/map-default-'.$room->floor->level.'.jpg';
+				}
 				
-				echo '<li>'.CHtml::link($room->number, array('room/view', 'id'=>$room->id), array('id'=>'room_'.$room->id,'class'=>'room')).'</li>';
+				echo '<li>'.CHtml::link(
+					$room->number,
+					array(
+						'room/view',
+						'id'=>$room->id
+					),
+					array(
+						'id'=>'room_'.$room->id,
+						'class'=>'room'
+					)
+				).'</li>'."\n";
 				echo CHtml::image(
 					$imageLink,
 					$model->building->name.' - Floor '.$model->level.' - '.$room->number,
@@ -65,10 +82,10 @@ class FloorController extends Controller
 						'class'=>'room-image',
 						'id'=>'room_'.$room->id.'_map',
 					)
-				);
+				)."\n";
 			}
 			
-			echo '</div>';
+			echo '</div>'."\n";
 		}
 	}
 

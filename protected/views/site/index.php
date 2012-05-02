@@ -49,7 +49,7 @@
 <div class="right-column">
 	<div class="map-images">
 		<?php echo CHtml::image(
-			Yii::app()->request->baseUrl.'/images/campus-map.jpg',
+			Yii::app()->request->baseUrl.'/images/buildings/map-default.jpg',
 			'University of Wisconsin - Whitewater Campus Map',
 			array(
 				'id'=>'mapImage',
