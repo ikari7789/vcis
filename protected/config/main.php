@@ -51,6 +51,7 @@ return array(
 			'rules'=>array(
 				''=>'site/index',
 				'<action:(login|logout)>'=>'site/<action>',
+				'(building|buildings)'=>'site/index',
 				'admin'=>'admin/index',
 				'list'=>'list/index',
 				'<view:(help)>'=>'site/page',

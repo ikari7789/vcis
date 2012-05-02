@@ -42,14 +42,18 @@ $this->breadcrumbs=array(
 						url: '".CController::createUrl('floor/ajaxRooms')."',
 						data: $(this).serialize(),
 						success: function(data) {
-							$(data).find('li').each(function() {
-								$(this).appendTo('ul.rooms');
-							});
-							$(data).find('img').each(function() {
-								if(!$('#'+this.id).length > 0) {
-									$('.map-images').prepend($(this));
-								}
-							})
+							if ($(data).html() != '') {
+								$(data).find('li').each(function() {
+									$(this).appendTo('ul.rooms');
+								});
+								$(data).find('img').each(function() {
+									if(!$('#'+this.id).length > 0) {
+										$('.map-images').prepend($(this));
+									}
+								})
+							} else {
+								$('ul.rooms').append('<li>No rooms found.</li>');
+							}
 						}
 					});
 				} else {
