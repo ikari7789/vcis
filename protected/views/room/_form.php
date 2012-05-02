@@ -27,46 +27,60 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 
 	<div class="row" id="building_row">
 		<?php echo CHtml::label('Building','building_id'); ?>
-		<?php echo CHtml::dropDownList('building_id', isset($model->floor->building->id) ? $model->floor->building->id : '', $buildings, array(
-				'empty'=>'--please select--',
-				'ajax' => array(
-						'type'=>'POST', // request type
-						'url'=>CController::createUrl('building/ajaxFloors'), // url to call
-						//Style: CController::createUrl('currentcontroller/methodToCall')
-						'update'=>'#Product_subcategory_id', // selector to update
-						'success'=>'js:function(data) {
-							if (data != "")
-							{
-								jQuery("#floor_row").show();
-								jQuery("#Room_floor_id")
-									.removeAttr("disabled")
-									.find("option").each(function() {
-										$(this).remove();
-									}).end()
-									.append("<option value=\"whatever\">--please select--</option>")
-									.append(data);
-									//alert(data);
-							}
-							else
-							{
-								jQuery("#floor_row").hide();
-								jQuery("#Room_floor_id")
-									.attr("disabled", "disabled")
-									.find("option").each(function() {
-										$(this).remove();
-									}).end()
-									.append("<option value=\"whatever\">--please select--</option>");
-							}
-						}',
-				)
-			)); ?>
+		<?php if (!$model->isNewRecord): ?>
+			<?php echo $model->building->name; ?>
+		<?php else: ?>
+			<?php
+				echo CHtml::dropDownList(
+					'building_id',
+					isset($model->floor->building->id) ? $model->floor->building->id : '', $buildings,
+					array(
+						'empty'=>'--please select--',
+						'ajax' => array(
+							'type'=>'POST', // request type
+							'url'=>CController::createUrl('building/ajaxFloors'), // url to call
+							//Style: CController::createUrl('currentcontroller/methodToCall')
+							'update'=>'#Product_subcategory_id', // selector to update
+							'success'=>'js:function(data) {
+								if (data != "")
+								{
+									jQuery("#floor_row").show();
+									jQuery("#Room_floor_id")
+										.removeAttr("disabled")
+										.find("option").each(function() {
+											$(this).remove();
+										}).end()
+										.append("<option value=\"whatever\">--please select--</option>")
+										.append(data);
+										//alert(data);
+								}
+								else
+								{
+									jQuery("#floor_row").hide();
+									jQuery("#Room_floor_id")
+										.attr("disabled", "disabled")
+										.find("option").each(function() {
+											$(this).remove();
+										}).end()
+										.append("<option value=\"whatever\">--please select--</option>");
+								}
+							}',
+						)
+					)
+				);
+			?>
+		<?php endif; ?>
 	</div>
 
 	<div class="row" id="floor_row">
 		<?php echo $form->labelEx($model,'floor_id'); ?>
-		<?php echo $form->dropDownList($model, 'floor_id', $floors, 
-			array('disabled'=>(count($floors) > 0 ? '' : 'disabled'),'empty'=>'--please select--',)); ?>
-		<?php echo $form->error($model,'floor_id'); ?>
+		<?php if (!$model->isNewRecord): ?>
+			<?php echo $model->floor->level; ?>
+		<?php else: ?>
+			<?php echo $form->dropDownList($model, 'floor_id', $floors, 
+				array('disabled'=>(count($floors) > 0 ? '' : 'disabled'),'empty'=>'--please select--',)); ?>
+			<?php echo $form->error($model,'floor_id'); ?>
+		<?php endif; ?>
 	</div>
 
 	<div class="row">
