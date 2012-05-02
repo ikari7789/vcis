@@ -72,29 +72,34 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 		<?php echo $form->fileField($model,'street_image',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'street_image'); ?>
 	</div>
-    
-	<div class="row">
-		<?php echo CHtml::label('Number of Floors','floorNum'); ?>
-		<?php $maxFloor = 1;
-			if (count($model->floors) > 0) {
-				foreach ($model->floors as $floor) {
-					$floors[$floor->level] = $floor;
-					$maxFloor = $floor->level;
-				}
-			}?>
-        <?php echo CHtml::dropDownList('floorNum', $maxFloor, array(
-			 1 =>  1,
-			 2 =>  2,
-			 3 =>  3,
-			 4 =>  4,
-			 5 =>  5,
-			 6 =>  6,
-			 7 =>  7,
-			 8 =>  8,
-			 9 =>  9,
-			10 => 10,
-		)); ?>
-    </div>
+	
+	<?php 
+		$maxFloor = 1;
+		if (count($model->floors) > 0) {
+			foreach ($model->floors as $floor) {
+				$floors[$floor->level] = $floor;
+				$maxFloor = $floor->level;
+			}
+		}
+	?>
+	
+    <?php if ($model->isNewRecord): ?>
+		<div class="row">
+			<?php echo CHtml::label('Number of Floors','floorNum'); ?>
+	        <?php echo CHtml::dropDownList('floorNum', $maxFloor, array(
+				 1 =>  1,
+				 2 =>  2,
+				 3 =>  3,
+				 4 =>  4,
+				 5 =>  5,
+				 6 =>  6,
+				 7 =>  7,
+				 8 =>  8,
+				 9 =>  9,
+				10 => 10,
+			)); ?>
+	    </div>
+	    <?php endif; ?>
     
     <div id="floors">
     	<?php

@@ -274,7 +274,7 @@ class BuildingController extends Controller
 				
 				// Create floors and link to building				
 				// Rework the $_FILES array
-				for ($floorNum = 1; $floorNum <= $_POST['floorNum']; $floorNum++)
+				for ($floorNum = 1; $floorNum <= count($floors); $floorNum++)
 				{
 					// Create Floor object
 					if (!isset($floors[$floorNum])) {
