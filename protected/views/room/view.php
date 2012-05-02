@@ -49,7 +49,6 @@ $this->menu=array(
 	<?php if (Yii::app()->user->checkAccess('updateRoom', Yii::app()->user->id)): ?>
 			<div class="admin"><?php echo CHtml::link('Update', array('room/update', 'id'=>$model->id)); ?></div>
 	<?php endif; ?>
-	<div><?php echo CHtml::link('Go to UWW Reservations Homepage', 'http://reservations.uww.edu'); ?></div>
 </div>
 <div class="left-column room">
 	<div class="images">
@@ -110,6 +109,13 @@ $this->menu=array(
 						</li>
 					<?php endforeach; ?>
 				</ul>
+				<div class="time">
+					<?php if ($oldest[$categoryName] != 0): ?>
+						Oldest information from <span><?php echo date('l, F d, Y', $oldest[$categoryName]); ?></span>
+					<?php else: ?>
+						Information unverified
+					<?php endif; ?>
+				</div>
 			<?php endforeach; ?>
 		</div>
 	<?php endif; ?>

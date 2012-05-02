@@ -52,13 +52,40 @@ class RoomController extends Controller
 			$roomFeatures[$feature->feature->category->name][$feature->feature->name]['description'] = $feature->feature->description;
 			$roomFeatures[$feature->feature->category->name][$feature->feature->name]['details'] = $feature;
 		}
-		ksort($roomFeatures);
-		foreach($roomFeatures as &$category)
-			ksort($category);
 		
+		$oldest = array();
+		
+		ksort($roomFeatures);
+		foreach($roomFeatures as $categoryName => &$category)
+		{
+			ksort($category);
+			$oldest[$categoryName] = time();
+			
+			foreach($category as $feature)
+			{
+				if (strtotime($feature['details']->verification_time) < $oldest[$categoryName])
+				{
+					if ($feature['details']->verification_time != '0000-00-00 00:00:00')
+						$oldest[$categoryName] = strtotime($feature['details']->verification_time);
+					else
+						$oldest[$categoryName] = 0;
+				}
+			}
+		}
+		
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$imageLocation = $rootPath['dirname'].'/images/rooms/'.$model->front_image;
+		if (is_dir($imageLocation) || !file_exists($imageLocation))
+			$model->front_image = 'front-default.jpg';
+				
+		$imageLocation = $rootPath['dirname'].'/images/rooms/'.$model->back_image;
+		if (is_dir($imageLocation) || !file_exists($imageLocation))
+			$model->back_image = 'back-default.jpg';
+
 		$this->render('view',array(
 			'model'=>$model,
 			'roomFeatures'=>$roomFeatures,
+			'oldest'=>$oldest,
 		));
 	}
 

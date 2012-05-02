@@ -57,6 +57,7 @@ class Room extends ActiveRecordBase
 		return array(
 			array('number, status, floor_id', 'required'),
 			array('number', 'unique'),
+			array('number', 'match', 'pattern'=>'/[A-Z]{2}\d+/', 'message'=>'Must be in format of 2 letters and a number. Ex. HH1000'),
 			array('status, floor_id', 'numerical', 'integerOnly'=>true),
 			array('number', 'length', 'max'=>10),
 			array('front_image, back_image, map_image', 'length', 'max'=>255),

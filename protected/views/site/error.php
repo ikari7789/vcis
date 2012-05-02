@@ -26,7 +26,7 @@ Yii::app()->clientScript->registerCss('error','
 The above error occurred when the Web server was processing your request.
 </p>
 <p>
-If you think this is a server error, please contact <?php echo Yii::app()->params['adminEmail']; ?>.
+If you think this is a server error, please contact <?php echo CHtml::mailto(Yii::app()->params['adminEmail'],Yii::app()->params['adminEmail']); ?>.
 </p>
 <p>
 Thank you.

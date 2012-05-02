@@ -1,0 +1,49 @@
+﻿#help li div {
+    display: none;
+}
+
+#help li {
+    padding-bottom: 10px;
+}
+
+#help li > a {
+    width: 100%;
+    display: block;
+    text-decoration: none;
+    border: 1px solid #BABABA;
+    color: black;
+    padding: 5px;
+    outline: 0;
+}
+
+#help li > a span {
+    display: inline-block;
+    font-size: 20px;
+    width: 25px;
+    font-weight: 700;
+    text-align: center;
+}
+
+#help li p {
+    display: block;
+    padding: 5px;
+}
+
+#help li div {
+    width: 100%;
+    padding: 5px;
+    border-left: 1px solid #BABABA;
+    border-right: 1px solid #BABABA;
+    border-bottom: 1px solid #BABABA;
+}
+
+#help li div img {
+    display: block;
+    float: right;
+    width: 428px;
+    margin: 10px;
+}
+
+.highlight {
+    background-color: #BABABA;
+}

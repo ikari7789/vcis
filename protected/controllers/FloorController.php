@@ -48,10 +48,18 @@ class FloorController extends Controller
 		if (Yii::app()->request->isPostRequest) {
 			echo '<div>';
 			$model = Floor::Model()->with('rooms')->findByPk($_POST['floors'],array('order'=>'rooms.number ASC'));
+			$rootPath = pathinfo(Yii::app()->request->scriptFile);
 			foreach($model->rooms as $room) {
+					
+				$imageLocation = $rootPath['dirname'].'/images/rooms/'.$room->map_image;
+				if (!is_dir($imageLocation) && file_exists($imageLocation))
+					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image;
+				else
+					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/map-default.jpg';
+				
 				echo '<li>'.CHtml::link($room->number, array('room/view', 'id'=>$room->id), array('id'=>'room_'.$room->id,'class'=>'room')).'</li>';
 				echo CHtml::image(
-					Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image,
+					$imageLink,
 					$model->building->name.' - Floor '.$model->level.' - '.$room->number,
 					array(
 						'class'=>'room-image',

@@ -47,7 +47,7 @@ return array(
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-			'showScriptName'=>false,
+			//'showScriptName'=>false,
 			'rules'=>array(
 				''=>'site/index',
 				'<action:(login|logout)>'=>'site/<action>',
@@ -94,6 +94,6 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'milleraw07@uww.edu',
+		'adminEmail'=>'registrar@uww.edu',
 	),
 );

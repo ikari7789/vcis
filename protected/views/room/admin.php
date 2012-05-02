@@ -6,8 +6,6 @@ $this->breadcrumbs=array(
 	'Manage Rooms',
 );
 
-$this->class='admin';
-
 $this->menu=array(
 	//array('label'=>'List Room', 'url'=>array('index')),
 	array('label'=>'Create Room', 'url'=>array('create')),
@@ -74,7 +72,10 @@ $('.search-form form').submit(function(){
 			//'description',
 			'create_time',
 			'update_time',
-			'status',
+			array(
+				'name'=>'status',
+				'value'=>'($data->status == 0) ? "Offline" : "Online"',
+			),
 			array(
 				'class'=>'CButtonColumn',
 				'template'=>$template,

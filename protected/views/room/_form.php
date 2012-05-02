@@ -27,7 +27,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 
 	<div class="row" id="building_row">
 		<?php echo CHtml::label('Building','building_id'); ?>
-		<?php echo CHtml::dropDownList('building_id', $model->floor->building->id, $buildings, array(
+		<?php echo CHtml::dropDownList('building_id', isset($model->floor->building->id) ? $model->floor->building->id : '', $buildings, array(
 				'empty'=>'--please select--',
 				'ajax' => array(
 						'type'=>'POST', // request type

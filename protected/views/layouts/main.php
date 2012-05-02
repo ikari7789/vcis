@@ -30,6 +30,7 @@
 		 Modernizr enables HTML5 elements & feature detects for optimal performance.
 		 Create your own custom Modernizr build: www.modernizr.com/download/ -->
 	<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/libs/modernizr-2.5.3.min.js"></script>
+	<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 </head>
 <body>
 	<!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.

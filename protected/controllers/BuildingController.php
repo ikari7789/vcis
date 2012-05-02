@@ -54,6 +54,7 @@ class BuildingController extends Controller
 		$floorImageJs = '';
 		$rooms = array(new Room);
 		$roomImageJs = '';
+		$streetImageJs = '';
 		if ($floors)
 		{
 			foreach ($floors as &$floor)
@@ -61,9 +62,16 @@ class BuildingController extends Controller
 		
 			// Load floor images
 			$floorImages = array();
+			$rootPath = pathinfo(Yii::app()->request->scriptFile);
 			foreach ($model->floors as $floorModel) {
+				$imageLocation = $rootPath['dirname'].'/images/floors/'.$floorModel->map_image;
+				if (!is_dir($imageLocation) && file_exists($imageLocation))
+					$imageLink = Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image;
+				else
+					$imageLink = Yii::app()->request->baseUrl.'/images/floors/map-default.jpg';
+				
 				$floorImages[] = CHtml::image(
-					Yii::app()->request->baseUrl.'/images/floors/'.$floorModel->map_image,
+					$imageLink,
 					$model->name.' - Floor '.$floorModel->level,
 					array(
 						'class'=>'floor-image',
@@ -73,7 +81,6 @@ class BuildingController extends Controller
 			}
 			
 			// Create Javascript for Floor image preloading
-			$floorImageJs = '';
 			foreach ($floorImages as $image)
 				$floorImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
 	
@@ -85,8 +92,14 @@ class BuildingController extends Controller
 			// Load room images
 			$roomImages = array();
 			foreach($rooms as $room)
+				$imageLocation = $rootPath['dirname'].'/images/rooms/'.$room->map_image;
+				if (!is_dir($imageLocation) && file_exists($imageLocation))
+					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image;
+				else
+					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/map-default.jpg';
+			
 				$roomImages[] = CHtml::image(
-					Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image,
+					$imageLink,
 					$model->name.' - Floor '.$room->floor->level.' - '.$room->number,
 					array(
 						'class'=>'room-image',
@@ -94,13 +107,19 @@ class BuildingController extends Controller
 					)
 				);
 			// Create JavaScript for Room image preloading
-			$roomImageJs = '';
 			foreach($roomImages as $image)
 				$roomImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
 			
-			$streetImageJs = '';
+			// Create JavaScript for Street Image preloading
+			$imageLocation = $rootPath['dirname'].'/images/buildings/'.$model->street_image;
+			if (!is_dir($imageLocation) && file_exists($imageLocation))
+				$imageLink = Yii::app()->request->baseUrl.'/images/buildings/'.$model->street_image;
+			else
+				$imageLink = Yii::app()->request->baseUrl.'/images/buildings/street-default.jpg';
+			
+			// Create JavaScript for Street Image preloading
 			$image = CHtml::image(
-				Yii::app()->request->baseUrl.'/images/buildings/'.$model->street_image,
+				$imageLink,
 				$model->name,
 				array(
 					'class'=>'street-image display',
@@ -365,6 +384,7 @@ class BuildingController extends Controller
 			if (isset($_POST['building_id']))
 			{
 				$model = Building::model()->findByPk($_POST['building_id']);
+				
 				echo $model->map_image;
 			}
 		}

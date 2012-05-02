@@ -1,8 +1,4 @@
 <?php $this->pageTitle=Yii::app()->name; ?>
-<?php $imageJs = ''; ?>
-<?php foreach($buildingImages as $image): ?>
-	<?php $imageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n"; ?>
-<?php endforeach; ?>
 
 <?php Yii::app()->clientScript->registerScript('imageHover',"
 	$(window).bind('load', function(){
@@ -33,7 +29,6 @@
 <div class="left-column">
 	<h2>Buildings</h2>
 	<ul class="buildings">
-		<?php $buildingImages = array(); ?>
 		<?php foreach ($buildings as $building): ?>
 			<li>
 				<?php echo CHtml::link(

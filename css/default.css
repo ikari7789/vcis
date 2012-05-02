@@ -239,12 +239,11 @@ h3.category {
     border-top-right-radius: 5px;
 }
 ul.room-features {
-    border-left: 1px solid grey;
-    border-bottom: 1px solid grey;
-    border-right: 1px solid grey;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid gray;
+    border-right: 1px solid gray;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    margin: 0 0 10px;
     width: 370px;
 }
 ul.room-features li:nth-child(odd) {
@@ -301,7 +300,7 @@ ol#list {
 
 ol#list li {
     padding: 10px;
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid gray;
     cursor: n-resize;
 }
 ol#list li div.room, ol#list li div.room a {
@@ -331,7 +330,7 @@ div.rooms {
 
 .form p.note {
     display: inline-block;
-    border: 1px solid grey;
+    border: 1px solid gray;
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 5px;
@@ -365,4 +364,16 @@ div.status.off {
 label.verification {
     margin-left: 15px;
     width: auto;
+}
+
+.features div.time {
+    width: 100%;
+    text-align: right;
+    display: block;
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.features div.time span {
+    font-size: 10px;
 }

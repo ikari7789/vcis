@@ -32,17 +32,35 @@ class SiteController extends Controller
 		// using the default layout 'protected/views/layouts/main.php'
 		$buildings = Building::model()->findAll(array('order'=>'name ASC'));
 		$buildingImages = array();
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
 		foreach ($buildings as $building)
+		{
+			$imageLocation = $rootPath['dirname'].'/images/buildings/'.$building->map_image;
+			if (!is_dir($imageLocation) && file_exists($imageLocation))
+				$imageLink = Yii::app()->request->baseUrl.'/images/buildings/'.$building->map_image;
+			else
+				$imageLink = Yii::app()->request->baseUrl.'/images/buildings/map-default.jpg';
+
 			$buildingImages[] = CHtml::image(
-				Yii::app()->request->baseUrl.'/images/buildings/'.$building->map_image,
+				$imageLink,
 				'University of Wisconsin - Whitewater Campus Map - '.$building->name,
 				array(
 					'class'=>'map-image',
 					'id'=>'building_'.$building->id.'_map',
 				)
 			);
+		}
+			
+		$imageJs = '';
+		foreach($buildingImages as $image)
+		{
+			$imageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
+		}
 		
-		$this->render('index', array('buildings'=>$buildings,'buildingImages'=>$buildingImages));
+		$this->render('index', array(
+			'buildings'=>$buildings,
+			'imageJs'=>$imageJs,
+		));
 	}
 
 	/**
