@@ -52,6 +52,13 @@ class Building extends ActiveRecordBase
 			array('name', 'unique'),
 			array('name', 'length', 'max'=>30),
 			array('map_image, street_image', 'length', 'max'=>255),
+			array('map_image, street_image', 'file',
+				'maxSize' => 1024 * 1024 * 2, // max filesize allowed
+				'tooLarge' => 'File must be less than 2MB',
+				'types' => array('jpg', 'jpeg', 'gif', 'png'),
+				'wrongType' => 'File can only be (.jpg, .gif, .png)',
+				'allowEmpty'=>true
+			),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, name, map_image, street_image, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -130,7 +137,8 @@ class Building extends ActiveRecordBase
 		Yii::trace('Begin','Building::afterSave');
 		
 		// Define save directory
-		$baseDir = Yii::getPathOfAlias('siteDir');
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
 		$uploadDir = $baseDir.'/images/buildings/';
 		Yii::trace('Image save location: '.$uploadDir,'Building::afterSave');
 		$update = false;
@@ -207,7 +215,8 @@ class Building extends ActiveRecordBase
 		Yii::trace('Begin','Building::afterDelete');
 
 		// Define delete directory
-		$baseDir = Yii::getPathOfAlias('siteDir');
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
 		$deleteDir = $baseDir.'/images/buildings/';
 		Yii::trace('Image save location: '.$deleteDir,'Building::afterSave');
 		

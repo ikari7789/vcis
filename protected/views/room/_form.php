@@ -16,7 +16,8 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/form.js', CClientScript::POS_HEAD);
 
-$baseDir = Yii::getPathOfAlias('siteDir');
+$rootPath = pathinfo(Yii::app()->request->scriptFile);
+$baseDir = $rootPath['dirname'];
 $uploadDir = $baseDir.'/images/rooms/';
 $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 ?>

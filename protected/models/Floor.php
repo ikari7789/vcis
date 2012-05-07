@@ -52,6 +52,13 @@ class Floor extends ActiveRecordBase
 			array('level, building_id', 'required'),
 			array('level, building_id', 'numerical', 'integerOnly'=>true),
 			array('map_image', 'length', 'max'=>255),
+			array('map_image', 'file',
+				'maxSize' => 1024 * 1024 * 2, // max filesize allowed
+				'tooLarge' => 'File must be less than 2MB',
+				'types' => array('jpg', 'jpeg', 'gif', 'png'),
+				'wrongType' => 'File can only be (.jpg, .gif, .png)',
+				'allowEmpty' => true,
+			),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, level, map_image, building_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
@@ -123,7 +130,8 @@ class Floor extends ActiveRecordBase
 				Yii::trace('CUploadedFile object found.','Floor::afterSave');
 				
 				// Define save directory
-				$baseDir = Yii::getPathOfAlias('siteDir');
+				$rootPath = pathinfo(Yii::app()->request->scriptFile);
+				$baseDir = $rootPath['dirname'];
 				$uploadDir = $baseDir.'/images/floors/';
 				Yii::trace('Save location: '.$uploadDir,'Floor::afterSave');
 				
@@ -162,7 +170,8 @@ class Floor extends ActiveRecordBase
 		Yii::trace('Begin','Floor::afterDelete');
 
 		// Define delete directory
-		$baseDir = Yii::getPathOfAlias('siteDir');
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
 		$deleteDir = $baseDir.'/images/floors/';
 		Yii::trace('Image save location: '.$deleteDir,'Floor::afterSave');
 		

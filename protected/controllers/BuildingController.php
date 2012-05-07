@@ -60,8 +60,12 @@ class BuildingController extends Controller
 		$streetImageJs = '';
 		if ($floors)
 		{
-			foreach ($floors as &$floor)
-				$floor='Floor '.$floor;
+			foreach ($floors as &$floor) {
+				if ($floor == 0)
+					$floor = 'Basement';
+				else
+					$floor='Floor '.$floor;
+			}
 		
 			// Load floor images
 			$floorImages = array();
@@ -87,6 +91,7 @@ class BuildingController extends Controller
 			foreach ($floorImages as $image)
 				$floorImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
 	
+			/*
 			
 			// Load rooms for first floor
 			$rooms = Floor::Model()->with('rooms')->findByAttributes(array('level'=>'1','building_id'=>$id),array('order'=>'rooms.number ASC'));
@@ -94,7 +99,7 @@ class BuildingController extends Controller
 			
 			// Load room images
 			$roomImages = array();
-			foreach($rooms as $room)
+			foreach($rooms as $room) {
 				$imageLocation = $rootPath['dirname'].'/images/rooms/'.$room->map_image;
 				if (!is_dir($imageLocation) && file_exists($imageLocation))
 					$imageLink = Yii::app()->request->baseUrl.'/images/rooms/'.$room->map_image;
@@ -115,9 +120,12 @@ class BuildingController extends Controller
 						'id'=>'room_'.$room->id.'_map',
 					)
 				);
+			}
 			// Create JavaScript for Room image preloading
 			foreach($roomImages as $image)
 				$roomImageJs.="$('".$image."').load(function(){\$('.map-images').prepend(\$(this))});\n";
+		
+			*/
 			
 			// Create JavaScript for Street Image preloading
 			$imageLocation = $rootPath['dirname'].'/images/buildings/'.$model->street_image;
@@ -170,10 +178,15 @@ class BuildingController extends Controller
 			$model->map_image = CUploadedFile::getInstance($model,'map_image');
 			$model->street_image = CUploadedFile::getInstance($model,'street_image');
 			if($model->save()) {
+					
+				// check for basement
+				$floorStart = 1;
+				if (isset($_POST['basement']))
+					$floorStart = 0;
 				
 				// Create floors and link to building				
-				// Rework the $_FILES array
-				for ($floorNum = 1; $floorNum <= $_POST['floorNum']; $floorNum++)
+				// Rework the $_FILES array				
+				for ($floorNum = $floorStart; $floorNum <= $_POST['floorNum']; $floorNum++)
 				{
 					// Create Floor object
 					$floor = new Floor;
@@ -274,35 +287,30 @@ class BuildingController extends Controller
 				
 				// Create floors and link to building				
 				// Rework the $_FILES array
-				for ($floorNum = 1; $floorNum <= count($floors); $floorNum++)
+				$floorStart = 1;
+				if (isset($_FILES['Floor']['name'][0]['map_image']))
+					$floorStart = 0;
+				
+				for ($floorNum = $floorStart; $floorNum < count($floors); $floorNum++)
 				{
 					// Create Floor object
-					if (!isset($floors[$floorNum])) {
-						$floor = new Floor;
-						Yii::trace('New Floor object instantiated.','BuildingController::actionUpdate');
-						$floor->level = $floorNum;
-						$floor->building_id = $model->id;
-					} else {
-						$floor = $floors[$level];
-						Yii::trace('Updating floor record.','BuildingController::actionUpdate');
-					}
+					$floor = $floors[$floorNum];
+					Yii::trace('Updating floor record.','BuildingController::actionUpdate');
 					
-					if (isset($_FILES['Floor']['name'][$floorNum]['map_image']))
+					if (isset($_FILES['Floor']['name'][$floorNum]['map_image'])
+					 && !empty($_FILES['Floor']['name'][$floorNum]['map_image']))
 					{
-						if ($_FILES['Floor']['name'][$floorNum]['map_image'] != '')
-						{
-							// Create CUploadedFile for floor model
-							$name      = $_FILES['Floor']['name'][$floorNum]['map_image'];
-							$tempName  = $_FILES['Floor']['tmp_name'][$floorNum]['map_image'];
-							$type      = $_FILES['Floor']['type'][$floorNum]['map_image'];
-							$size      = $_FILES['Floor']['size'][$floorNum]['map_image'];
-							$error     = $_FILES['Floor']['error'][$floorNum]['map_image'];
-							$new_map_image = new CUploadedFile($name, $tempName, $type, $size, $error);
-							Yii::trace('CUploadedFile object: '.$map_image->__toString(),'BuildingController::actionUpdate');
-							
-							if (is_object($new_map_image) && get_class($new_map_image)==='CUploadedFile')
-								$floor->map_image = $new_map_image;
-						} // end if
+						// Create CUploadedFile for floor model
+						$name      = $_FILES['Floor']['name'][$floorNum]['map_image'];
+						$tempName  = $_FILES['Floor']['tmp_name'][$floorNum]['map_image'];
+						$type      = $_FILES['Floor']['type'][$floorNum]['map_image'];
+						$size      = $_FILES['Floor']['size'][$floorNum]['map_image'];
+						$error     = $_FILES['Floor']['error'][$floorNum]['map_image'];
+						$new_map_image = new CUploadedFile($name, $tempName, $type, $size, $error);
+						Yii::trace('CUploadedFile object: '.$new_map_image,'BuildingController::actionUpdate');
+						
+						if (is_object($new_map_image) && get_class($new_map_image)==='CUploadedFile')
+							$floor->map_image = $new_map_image;
 					} // end if
 					
 					if ($floor->save())
@@ -326,9 +334,8 @@ class BuildingController extends Controller
 					if ($floor->hasErrors())
 						$errors = true;
 				// if no errors, finish, else, bring back to create page
-				if (!$errors)
-					//$this->redirect(array('view','id'=>$model->id));
-					$this->redirect(array('admin'));
+				// if (!$errors)
+					//$this->redirect(array('admin'));
 			} // end if model->save
 		}
 

@@ -8,7 +8,11 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	//array('label'=>'List Room', 'url'=>array('index')),
-	array('label'=>'Create Room', 'url'=>array('create')),
+	array('label'=>'Create Room', 'url'=>array('create'), 'visible'=>Yii::app()->user->checkAccess('createRoom', Yii::app()->user->id)),
+	array('label'=>'Manage Buildings', 'url'=>array('building/admin'), 'visible'=>Yii::app()->user->checkAccess('manageBuilding', Yii::app()->user->id)),
+	array('label'=>'Manage Feature Categories', 'url'=>array('category/admin'), 'visible'=>Yii::app()->user->checkAccess('manageCategory', Yii::app()->user->id)),
+	array('label'=>'Manage Features', 'url'=>array('feature/admin'), 'visible'=>Yii::app()->user->checkAccess('manageFeature', Yii::app()->user->id)),
+	array('label'=>'Manage Users', 'url'=>array('user/admin'), 'visible'=>Yii::app()->user->checkAccess('manageUser', Yii::app()->user->id)),
 );
 
 Yii::app()->clientScript->registerScript('search', "

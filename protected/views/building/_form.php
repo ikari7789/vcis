@@ -16,6 +16,8 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
     )
 );
 
+$rootPath = pathinfo(Yii::app()->request->scriptFile);
+
 ?>
 
 	<p class="note">Fields with <span class="required">*</span> are required. Click on images to increase size.</p>
@@ -32,7 +34,7 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 	<div class="row">
 		<?php echo $form->labelEx($model,'map_image'); ?>
 		<?php
-			$baseDir = Yii::getPathOfAlias('siteDir');
+			$baseDir = $rootPath['dirname'];
 			$uploadDir = $baseDir.'/images/buildings/';
 			if ($model->map_image != '' && file_exists($uploadDir.$model->map_image))
 				echo CHtml::link(
@@ -54,7 +56,7 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 	<div class="row">
 		<?php echo $form->labelEx($model,'street_image'); ?>
 		<?php
-			$baseDir = Yii::getPathOfAlias('siteDir');
+			$baseDir = $rootPath['dirname'];
 			$uploadDir = $baseDir.'/images/buildings/';
 			if ($model->street_image != '' && file_exists($uploadDir.$model->street_image))
 				echo CHtml::link(
@@ -98,41 +100,60 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 				 9 =>  9,
 				10 => 10,
 			)); ?>
+			<?php echo CHtml::htmlButton('Add a Basement',array('name'=>'basementBtn', 'id'=>'basementBtn')); ?>
 	    </div>
-	    <?php endif; ?>
+	<?php endif; ?>
     
     <div id="floors">
     	<?php
-		$baseDir = Yii::getPathOfAlias('siteDir');
-		$uploadDir = $baseDir.'/images/floors/';
-		
-		for ($floor = 1; $floor <= $maxFloor; $floor++) {
+			$baseDir = $rootPath['dirname'];
+			$uploadDir = $baseDir.'/images/floors/';
 		?>
-		<div class="row">
-			<?php 
-			if (isset($floors[$floor])) {?>
-				<label for="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">Floor <?php echo $floors[$floor]->level; ?> image</label> <?php
-				if (!empty($floors[$floor]->map_image) && file_exists($uploadDir.$floors[$floor]->map_image))
-					echo CHtml::link(
+		
+		<?php if (isset($floors[0])): ?>
+			<div class="row basement">
+				<label for="Floor[<?php echo $floors[0]->level; ?>][map_image]">Basement image</label>
+				<?php if (!empty($floors[0]->map_image) && file_exists($uploadDir.$floors[0]->map_image)): ?>
+					<?php echo CHtml::link(
 						CHtml::image(
-							Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image,
-							$model->name.' - Floor '.$floors[$floor]->level
+							Yii::app()->request->baseUrl.'/images/floors/'.$floors[0]->map_image,
+							$model->name.' - Floor '.$floors[0]->level
 						),
-						Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image,
+						Yii::app()->request->baseUrl.'/images/floors/'.$floors[0]->map_image,
 						array(
 							'class'=>'fancy'
 						)
-					);
-					//echo CHtml::image(Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image, 
-					//	$model->name.' - Floor '.$floors[$floor]->level)."\n"; 
-				?>
-				<input id="Floor_<?php echo $floors[$floor]->level; ?>_map_image" type="file" size="60" maxlength="255" value="" name="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">
-			<?php } else { ?>
-				<label for="Floor[<?php echo $floor; ?>][map_image]">Floor <?php echo $floor; ?> image</label>
-				<input id="Floor_<?php echo $floor; ?>_map_image" type="file" size="60" maxlength="255" value="" name="Floor[<?php echo $floor; ?>][map_image]">
-			<?php } ?>
-		</div>
-		<?php } ?>
+					); ?>
+				<?php endif; ?>
+				<input id="Floor_<?php echo $floors[0]->level; ?>_map_image" type="file" size="60" maxlength="255" value="" name="Floor[0][map_image]">
+			</div>		
+		<?php endif; ?>
+		
+		<?php for ($floor = 1; $floor <= $maxFloor; $floor++): ?>
+			<div class="row floor">
+				<?php if (isset($floors[$floor])): ?>
+					<label for="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">Floor <?php echo $floors[$floor]->level; ?> image</label>
+					<?php if (!empty($floors[$floor]->map_image) && file_exists($uploadDir.$floors[$floor]->map_image))
+						echo CHtml::link(
+							CHtml::image(
+								Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image,
+								$model->name.' - Floor '.$floors[$floor]->level
+							),
+							Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image,
+							array(
+								'class'=>'fancy'
+							)
+						);
+						//echo CHtml::image(Yii::app()->request->baseUrl.'/images/floors/'.$floors[$floor]->map_image, 
+						//	$model->name.' - Floor '.$floors[$floor]->level)."\n"; 
+					?>
+					<input id="Floor_<?php echo $floors[$floor]->level; ?>_map_image" type="file" size="60" maxlength="255" value="" name="Floor[<?php echo $floors[$floor]->level; ?>][map_image]">
+				<?php else: ?>
+					<label for="Floor[<?php echo $floor; ?>][map_image]">Floor <?php echo $floor; ?> image</label>
+					<input id="Floor_<?php echo $floor; ?>_map_image" type="file" size="60" maxlength="255" value="" name="Floor[<?php echo $floor; ?>][map_image]">
+				<?php endif; ?>
+			</div>
+		<?php endfor; ?>
     </div>
 
 	<div class="row buttons">

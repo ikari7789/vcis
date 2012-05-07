@@ -14,8 +14,8 @@ class SearchController extends Controller
 
 	public function actionCreate()
 	{
-		//$index = new Zend_Search_Lucene(Yii::getPathOfAlias('siteDir').$this->_indexFiles, true);
-		$index = Zend_Search_Lucene::create(Yii::getPathOfAlias('siteDir').$this->_indexFiles);
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$index = Zend_Search_Lucene::create($rootPath['dirname'].$this->_indexFiles);
 		
 		Zend_Search_Lucene_Analysis_Analyzer::setDefault(
 			new Search_Analyzer()
@@ -61,7 +61,8 @@ class SearchController extends Controller
 	{
 		if (isset($_GET['terms']))
 		{
-			$index = new Zend_Search_Lucene(Yii::getPathOfAlias('siteDir').$this->_indexFiles);
+			$rootPath = pathinfo(Yii::app()->request->scriptFile);
+			$index = new Zend_Search_Lucene($rootPath['dirname'].$this->_indexFiles);
 			$results = $index->find($_GET['terms']);
 			$this->render('search', array('results' => $results));
 		}
@@ -73,7 +74,8 @@ class SearchController extends Controller
 	
 	public function actionUpdate()
 	{
-		$removePath = Yii::getPathOfAlias('siteDir').$this->_indexFiles;
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$removePath = $rootPath['dirname'].$this->_indexFiles;
 		$this->actionCreate();
 	}
 	

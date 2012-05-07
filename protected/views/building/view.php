@@ -101,7 +101,7 @@ $this->breadcrumbs=array(
 	</div>
 	
 	<div class="left-column">
-		<?php /* <span>Please select a floor to view:</span> */ ?>
+		<span>Select a floor from the dropdown menu to view rooms on that floor</span>
 		<?php echo CHtml::dropDownList('floors', '', $floors, array('id'=>'floors','empty'=>'Please select a floor to view')); ?>
 		<div class="rooms">
 			<span>Rooms:</span>

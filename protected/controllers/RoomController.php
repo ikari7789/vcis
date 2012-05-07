@@ -127,6 +127,7 @@ class RoomController extends Controller
 			Yii::trace("Save entered data to \$model:\n".print_r($model->getAttributes(), true),'RoomController::actionCreate');
 			
 			if($model->save())
+			{
 				Yii::trace('$model saved successfully.','RoomController::actionCreate');
 				
 				// Save room features
@@ -148,6 +149,7 @@ class RoomController extends Controller
 				
 				Yii::trace('Redirect to view: admin','RoomController::actionCreate');
 				$this->redirect(array('admin')); //$this->redirect(array('view','id'=>$model->id));
+			}
 		}
 
 		Yii::trace('Render view: create','RoomController::actionCreate');
@@ -241,7 +243,8 @@ class RoomController extends Controller
 			
 			Yii::trace('Attempting to save changes.','RoomController::actionUpdate');
 			Yii::trace("Model data:\n".print_r($model->getAttributes(), TRUE),'RoomController::actionUpdate');
-			if($model->save()) {
+			if($model->save()) 
+			{
 				Yii::trace('Save successful. Seeing if there are features to save.','RoomController::actionUpdate');
 				// Save room features
 				if (isset($_POST['RoomFeature']))

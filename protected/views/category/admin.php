@@ -8,7 +8,11 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	//array('label'=>'List Category', 'url'=>array('index')),
-	array('label'=>'Create Category', 'url'=>array('create')),
+	array('label'=>'Create Category', 'url'=>array('create'), 'visible'=>Yii::app()->user->checkAccess('createCategory', Yii::app()->user->id)),
+	array('label'=>'Manage Buildings', 'url'=>array('building/admin'), 'visible'=>Yii::app()->user->checkAccess('manageBuilding', Yii::app()->user->id)),
+	array('label'=>'Manage Rooms', 'url'=>array('room/admin'), 'visible'=>Yii::app()->user->checkAccess('manageRoom', Yii::app()->user->id)),
+	array('label'=>'Manage Features', 'url'=>array('feature/admin'), 'visible'=>Yii::app()->user->checkAccess('manageFeature', Yii::app()->user->id)),
+	array('label'=>'Manage Users', 'url'=>array('user/admin'), 'visible'=>Yii::app()->user->checkAccess('manageUser', Yii::app()->user->id)),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -42,7 +46,7 @@ $('.search-form form').submit(function(){
 <div class="left-column admin">
 	<?php 
 	
-	$template = '{view}';
+	$template = '';
 		
 	if (Yii::app()->user->checkAccess('updateCategory', Yii::app()->user->id))
 		$template .= '{update}';

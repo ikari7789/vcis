@@ -2,27 +2,37 @@
 $this->pageTitle = 'Room List | '.Yii::app()->name;
 $this->breadcrumbs=array(
 	'List',
-); ?>
+); 
+
+$this->widget('application.extensions.fancybox.EFancyBox', array(
+    'target'=>'a.fancy',
+    'config'=>array(),
+    )
+);
+?>
 <?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 <?php Yii::app()->clientScript->registerScript('room',"
 	$(document).ready(function() {
 		// remove from list code
 		$('button.remove').on('click', function() {
-			var room = $(this).parent().find('input[type=hidden]');
-			$.ajax({
-				type: 'POST',
-				url: '".CController::createUrl('list/remove')."',
-				data: 'room_id='+room.val(),
-				success: function(data) {
-					//alert(data);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert('Error removing from list');
-				}
-			});
-			$(this).parent().remove();
-			if ($('#list li').length == 0)
-				$('#list').html('<li>No rooms currently in list</li>');
+			var msg = 'Are you sure you want to remove this room from the list?';
+			if (confirm(msg)) {
+				var room = $(this).parent().find('input[type=hidden]');
+				$.ajax({
+					type: 'POST',
+					url: '".CController::createUrl('list/remove')."',
+					data: 'room_id='+room.val(),
+					success: function(data) {
+						//alert(data);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert('Error removing from list');
+					}
+				});
+				$(this).parent().remove();
+				if ($('#list li').length == 0)
+					$('#list').html('<li>No rooms currently in list</li>');
+			}
 		});
 		$('#list').sortable({
 			axis: 'y',
@@ -100,6 +110,17 @@ $this->breadcrumbs=array(
 			<li class="sortable">
 				<?php echo CHtml::hiddenField('room_'.$room->id, $room->id); ?>
 				<?php echo CHtml::htmlButton('X', array('class'=>'remove')); ?>
+				<div class="image">
+					<?php echo CHtml::link(
+						CHtml::image(
+							Yii::app()->request->baseUrl.'/images/rooms/'.$room->front_image,
+							'Room '.$room->number.' front view',
+							array('class'=>'list-image')
+						),
+						Yii::app()->request->baseUrl.'/images/rooms/'.substr($room->front_image,0,-4).'_large'.substr($room->front_image,-4),
+						array('class'=>'fancy')
+					); ?>
+				</div>
 				<div class="room">Room: <?php echo CHtml::link($room->number, array('room/view','id'=>$room->id)); ?></div>
 				<div class="building">Building: <?php echo $room->floor->building->name; ?></div>
 				<div class="floor">Floor: <?php echo $room->floor->level; ?></div>

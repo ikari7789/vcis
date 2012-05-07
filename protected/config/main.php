@@ -1,7 +1,7 @@
 <?php
 
 // uncomment the following to define a path alias
-Yii::setPathOfAlias('siteDir','/home/vcis/vcis');
+//Yii::setPathOfAlias('siteDir','');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
@@ -65,7 +65,7 @@ return array(
 		//),
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=mysql.standingmist.com;dbname=standingmist_vcis',
+			'connectionString' => 'mysql:host=localhost;dbname=standingmist_vcis',
 			'emulatePrepare' => true,
 			'username' => 'vcis',
 			'password' => 'mcssad2',

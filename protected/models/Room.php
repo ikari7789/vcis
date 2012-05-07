@@ -28,6 +28,7 @@ class Room extends ActiveRecordBase
 	private $_oldValues = array();
 	public $building_name;
 	public $floor_level;
+	public $statuses = array(1=>'Online', 0=>'Offline');
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -57,14 +58,21 @@ class Room extends ActiveRecordBase
 		return array(
 			array('number, status, floor_id', 'required'),
 			array('number', 'unique'),
-			array('number', 'match', 'pattern'=>'/[A-Z]{2}\d+/', 'message'=>'Must be in format of 2 letters and a number. Ex. HH1000'),
+			array('number', 'match', 'pattern'=>'/[A-Z]{2}\d+/', 'message'=>'Must be in format of 2 capital letters and a number. Ex. HH1000'),
 			array('status, floor_id', 'numerical', 'integerOnly'=>true),
 			array('number', 'length', 'max'=>10),
 			array('front_image, back_image, map_image', 'length', 'max'=>255),
+			array('front_image, back_image, map_image', 'file',
+				'maxSize' => 1024 * 1024 * 2, // max filesize allowed
+				'tooLarge' => 'File must be less than 2MB',
+				'types' => array('jpg', 'jpeg', 'gif', 'png'),
+				'wrongType' => 'File can only be (.jpg, .gif, .png)',
+				'allowEmpty'=>true,
+			),
 			array('description','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, building_name, floor_level, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
+			array('id, building_name, floor_level, statuses, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -167,10 +175,21 @@ class Room extends ActiveRecordBase
 		Yii::trace('begin','Room::afterSave');
 
 		// Define save directory
-		$baseDir = Yii::getPathOfAlias('siteDir');
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
 		$uploadDir = $baseDir.'/images/rooms/';
 		Yii::trace('Image save location: '.$uploadDir,'Room::afterSave');
-		$baseFname = $this->floor->building_id.'_'.$this->floor->id.'_'.$this->id.'_';
+		/*
+		Yii::trace('Building ID: '.$this->building->id,'Room::afterSave');
+		Yii::trace('Floor ID: '.$this->floor->id,'Room::afterSave');
+		Yii::trace('Room ID: '.$this->id,'Room::afterSave');
+		$baseFname = $this->building->id.'_'.$this->floor->id.'_'.$this->id.'_';
+		*/
+		$floor = Floor::model()->findByPk($this->floor_id);
+		Yii::trace('Building ID: '.$floor->building->id,'Room::afterSave');
+		Yii::trace('Floor ID: '.$floor->id,'Room::afterSave');
+		Yii::trace('Room ID: '.$this->id,'Room::afterSave');
+		$baseFname = $floor->building->id.'_'.$floor->id.'_'.$this->id.'_';
 		$update = false;
 
 		// Make sure the image is an uploaded image, otherwise leave image alone
@@ -278,7 +297,8 @@ class Room extends ActiveRecordBase
 		Yii::trace('Begin','Room::afterDelete');
 		
 		// Define delete directory
-		$baseDir = Yii::getPathOfAlias('siteDir');
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
 		$deleteDir = $baseDir.'/images/rooms/';
 		Yii::trace('Image save location: '.$deleteDir,'Room::afterDelete');
 		
