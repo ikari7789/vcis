@@ -98,6 +98,14 @@ EOD;
 			$this->_authManager->createOperation("updateCategory","update a category's information");
 			$this->_authManager->createOperation("deleteCategory","remove a category");
 			
+			// Disallow user from deleting their own account
+			$bizRule = 'return Yii::app()->user->id != $params["id"];';
+			$role=$this->_authManager->createTask('deleteOtherUser','Delete any user besides your own account',$bizRule);
+			
+			// Allow user to edit their own account
+			$bizRule = 'return Yii::app()->user->id == $params["id"];';
+			$role=$this->_authManager->createTask('updateOwnUser','Update the user\'s own account', $bizRule);
+			
 			// create the employee role and add the appropriate permissions as children to this role
 			$role=$this->_authManager->createRole("employee","User able to create and update inventory");
 			
@@ -121,6 +129,7 @@ EOD;
 			$role->addChild("updateRoomFeature");
 			$role->addChild("updateFeature");
 			$role->addChild("updateCategory");
+			$role->addChild("updateOwnUser");
 			
 			$role->addChild("manageBuilding");
 			$role->addChild("manageFloor");
@@ -144,7 +153,7 @@ EOD;
 			
 			$role->addChild("manageUser");
 			
-			$role->addChild("deleteUser");
+			$role->addChild("deleteOtherUser");
 			$role->addChild("deleteBuilding");
 			$role->addChild("deleteFloor");
 			$role->addChild("deleteFeature");

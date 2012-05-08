@@ -234,7 +234,6 @@ class BuildingController extends Controller
 						$errors = true;
 				// if no errors, finish, else, bring back to create page
 				if (!$errors)
-					//$this->redirect(array('view','id'=>$model->id));
 					$this->redirect(array('admin'));
 			} // end if model->save
 		}
@@ -291,7 +290,11 @@ class BuildingController extends Controller
 				if (isset($_FILES['Floor']['name'][0]['map_image']))
 					$floorStart = 0;
 				
-				for ($floorNum = $floorStart; $floorNum < count($floors); $floorNum++)
+				$maxFloors = count($floors);
+				if ($floorStart == 1)
+					$maxFloors = count($floors) + 1;
+				
+				for ($floorNum = $floorStart; $floorNum < $maxFloors; $floorNum++)
 				{
 					// Create Floor object
 					$floor = $floors[$floorNum];
@@ -334,8 +337,8 @@ class BuildingController extends Controller
 					if ($floor->hasErrors())
 						$errors = true;
 				// if no errors, finish, else, bring back to create page
-				// if (!$errors)
-					//$this->redirect(array('admin'));
+				if (!$errors)
+					$this->redirect(array('admin'));
 			} // end if model->save
 		}
 

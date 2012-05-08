@@ -44,16 +44,12 @@ $('.search-form form').submit(function(){
 	</div><!-- search-form -->
 </div>
 <div class="left-column admin">
-	<?php 
-	
-	$template = '{view}';
+	<?php
 		
-	if (Yii::app()->user->checkAccess('updateUser', Yii::app()->user->id))
-		$template .= '{update}';
-	
-	if (Yii::app()->user->checkAccess('deleteUser', Yii::app()->user->id))
-		$template .= '{delete}';
-	
+	$userType = 'updateOwnUser';
+	if (Yii::app()->user->checkAccess('administrator'))
+		$userType = 'updateUser';
+
 	$this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'user-grid',
 		'dataProvider'=>$model->search(),
@@ -70,7 +66,18 @@ $('.search-form form').submit(function(){
 			*/
 			array(
 				'class'=>'CButtonColumn',
-				'template'=>$template,
+				//'template'=>'{view}{update}{delete}', //$template,
+				'buttons'=>array(
+					'view'=>array(
+						'visible'=>'true',
+					),
+					'update'=>array(
+						'visible'=>'Yii::app()->user->checkAccess("'.$userType.'", array("id"=>$data->id))',
+					),
+					'delete'=>array(
+						'visible'=>'Yii::app()->user->checkAccess("deleteOtherUser", array("id"=>$data->id))',
+					),
+				),
 			),
 		),
 	)); ?>

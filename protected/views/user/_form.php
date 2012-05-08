@@ -26,7 +26,7 @@
 		<?php echo $form->error($model,'email'); ?>
 	</div>
 	
-	<?php if (isset($model->password)): ?>
+	<?php if (!$model->isNewRecord): ?>
 		<div class="row">
 			<?php $model->currentPassword = ''; ?>
 			<?php echo $form->labelEx($model,'currentPassword'); ?>

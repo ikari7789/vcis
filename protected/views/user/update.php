@@ -1,12 +1,17 @@
 <?php
 $this->pageTitle='Update User: '.$model->username.' | '.Yii::app()->name;
-$this->breadcrumbs=array(
-	'Administrative Tools'=>array('admin/index'),
-	//'Users'=>array('index'),
-	//$model->id=>array('view','id'=>$model->id),
-	'Manage Users'=>array('user/admin'),
-	'Update User: '.$model->username,
-);
+
+if (Yii::app()->user->checkAccess('manageUser'))
+	$this->breadcrumbs=array(
+		'Administrative Tools'=>array('admin/index'),
+		'Manage Users'=>array('user/admin'),
+		'Update User: '.$model->username,
+	);
+else
+	$this->breadcrumbs=array(
+		'Administrative Tools'=>array('admin/index'),
+		'Update User: '.$model->username,
+	);
 
 $this->menu=array(
 	//array('label'=>'List User', 'url'=>array('index')),

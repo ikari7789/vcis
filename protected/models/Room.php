@@ -238,7 +238,10 @@ class Room extends ActiveRecordBase
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
-					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
+					$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
+					if (!is_dir($filePath) && file_exists($filePath))
+						unlink($filePath);
+					$img->save($filePath);
 					if ($img->getWidth() > 425)
 						$img->resizeToWidth(425);
 					$img->save($file);	
@@ -269,7 +272,10 @@ class Room extends ActiveRecordBase
 					$file = $uploadDir.$newfname;
 					$img = Yii::app()->simpleImage->load($file);
 					// keep original image
-					$img->save($uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt);
+					$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
+					if (!is_dir($filePath) && file_exists($filePath))
+						unlink($filePath);
+					$img->save($filePath);
 					if ($img->getWidth() > 425)
 						$img->resizeToWidth(425);
 					$img->save($file);

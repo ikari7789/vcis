@@ -89,8 +89,8 @@ class UserController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		if (!Yii::app()->user->checkAccess('updateUser', Yii::app()->user->id))
-		{
+		if (!Yii::app()->user->checkAccess('updateOwnUser', array('id'=>$id))
+		 && !Yii::app()->user->checkAccess('updateUser')) {
 			throw new CHttpException(403,'You are not authorized to perform this action.');
 		}
 		$model=$this->loadModel($id);
@@ -133,10 +133,10 @@ class UserController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if (!Yii::app()->user->checkAccess('deleteUser', Yii::app()->user->id))
-		{
+		if (!Yii::app()->user->checkAccess('deleteOtherUser', array('id'=>$id))) {
 			throw new CHttpException(403,'You are not authorized to perform this action.');
 		}
+		
 		if(Yii::app()->request->isPostRequest)
 		{
 			// we only allow deletion via POST request

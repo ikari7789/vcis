@@ -20,7 +20,12 @@ $rootPath = pathinfo(Yii::app()->request->scriptFile);
 
 ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required. Click on images to increase size.</p>
+	<p class="note">
+		Fields with <span class="required">*</span> are required.<br />
+		Click on images to increase size.<br />
+		There is a max filesize limit of 2MB on images.<br />
+		Newly added image might not show immediately after upload. Attempt a hard-refresh of the page to clear the cache by pressing Ctrl+F5 on Windows.
+	</p>
 
 	<?php echo $form->errorSummary($model); ?>
 	<?php //echo $form->errorSummary($floors); ?>

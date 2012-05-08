@@ -22,8 +22,13 @@ $uploadDir = $baseDir.'/images/rooms/';
 $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required. Click on images to increase size.</p>
-
+	<p class="note">
+		Fields with <span class="required">*</span> are required.<br />
+		Click on images to increase size.<br />
+		There is a max filesize limit of 2MB on images.<br />
+		Newly added image might not show immediately after upload. Attempt a hard-refresh of the page to clear the cache by pressing Ctrl+F5 on Windows.
+	</p>
+	
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row" id="building_row">
@@ -99,7 +104,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 						$imageUrl.$model->front_image,
 						'Front Image'
 					),
-					Yii::app()->request->baseUrl.$imageUrl.substr($model->front_image,0,-4).'_large'.substr($model->front_image,-4),
+					$imageUrl.substr($model->front_image,0,-4).'_large'.substr($model->front_image,-4),
 					array(
 						'class'=>'fancy'
 					)
@@ -118,7 +123,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 						$imageUrl.$model->back_image,
 						'Back Image'
 					),
-					Yii::app()->request->baseUrl.$imageUrl.substr($model->back_image,0,-4).'_large'.substr($model->back_image,-4),
+					$imageUrl.substr($model->back_image,0,-4).'_large'.substr($model->back_image,-4),
 					array(
 						'class'=>'fancy'
 					)
@@ -137,7 +142,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 						$imageUrl.$model->map_image,
 						'Map Image'
 					),
-					Yii::app()->request->baseUrl.$imageUrl.$model->map_image,
+					$imageUrl.$model->map_image,
 					array(
 						'class'=>'fancy'
 					)
