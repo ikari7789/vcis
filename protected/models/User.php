@@ -149,7 +149,7 @@ class User extends ActiveRecordBase
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
-				'defaultSort'=>'t.username',
+				'defaultOrder'=>'t.username',
 			),
 		));
 	}
