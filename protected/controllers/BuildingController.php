@@ -412,7 +412,10 @@ class BuildingController extends Controller
 			$data = CHtml::listData($model->floors, 'id', 'level');
 			foreach($data as $value=>$name)
 			{
-				echo CHtml::tag('option',array('value'=>$value),CHtml::encode($name),true);
+				if ($name == 0)
+					echo CHtml::tag('option',array('value'=>$value),CHtml::encode('Basement'),true);
+				else
+					echo CHtml::tag('option',array('value'=>$value),CHtml::encode($name),true);
 			}
 		}
 	}

@@ -221,7 +221,8 @@ img.front-image {
     display: inline-block;
     margin-right: 5px;
 }
-.images span.info, .features span.info {
+
+span.info {
     font-style: italic;
     font-size: 12px;
 }
@@ -382,4 +383,15 @@ label.verification {
     float: left;
     margin-right: 10px;
     width: 100px;
+}
+
+img.map-image, img.street-image, img.floor-image, img.room-image {
+    width: 528px;
+}
+
+img.front-image, img.back-image {
+    width: 424px;
+}
+span.feature.info {
+    margin-left: 15px;
 }

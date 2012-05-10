@@ -59,17 +59,12 @@ class RoomController extends Controller
 		foreach($roomFeatures as $categoryName => &$category)
 		{
 			ksort($category);
-			$oldest[$categoryName] = time();
+			$oldest[$categoryName] = 0;
 			
 			foreach($category as $feature)
 			{
-				if (strtotime($feature['details']->verification_time) < $oldest[$categoryName])
-				{
-					if ($feature['details']->verification_time != '0000-00-00 00:00:00')
-						$oldest[$categoryName] = strtotime($feature['details']->verification_time);
-					else
-						$oldest[$categoryName] = 0;
-				}
+				if (strtotime($feature['details']->verification_time) > $oldest[$categoryName])	
+					$oldest[$categoryName] = strtotime($feature['details']->verification_time);
 			}
 		}
 		
@@ -139,8 +134,8 @@ class RoomController extends Controller
 					{
 						if (!empty($feature['details']))
 						{
-							if (isset($feature['verified']))
-								$feature['verified'] = 0;
+							if (!isset($feature['verified']))
+								$feature['verified'] = false;
 							Yii::trace('Attempting to save feature: '.$featureId,'RoomController::actionCreate');
 							$model->addFeature($featureId, $feature['details'], $feature['verified']);
 						}
@@ -189,7 +184,7 @@ class RoomController extends Controller
 		foreach ($model->room_features as $feature) {
 			$roomFeatures[$feature->feature->id]['details'] = $feature->details;
 			if (isset($feature->verification_time))
-				$roomFeatures[$feature->feature->id]['verified'] = 1;
+				$roomFeatures[$feature->feature->id]['verification_time'] = $feature->verification_time;
 		}
 		Yii::trace('Room Features loaded.','RoomController::actionUpdate');
 
@@ -257,7 +252,7 @@ class RoomController extends Controller
 						{
 							Yii::trace('Feature has been entered for room. Attempting to add to database.','RoomController::actionUpdate');
 							if (!isset($feature['verified']))
-								$feature['verified'] = 0;
+								$feature['verified'] = false;
 							Yii::trace("Attempting to add:\nFeature ID: ".$featureId."\nFeature Details: ".$feature['details']."\nFeature Verified: ".$feature['verified'],'RoomController::actionUpdate');
 							$model->addFeature($featureId, $feature['details'], $feature['verified']);
 						}

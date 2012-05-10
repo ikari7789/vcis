@@ -58,6 +58,14 @@ class ListController extends Controller
 			$session['list'] = new RoomList;
 		$list = $session['list'];
 		$rooms = $session['list']->getRooms();
+		
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		foreach($rooms as $room) {
+			$imageLocation = $rootPath['dirname'].'/images/rooms/'.$room->front_image;
+			if (is_dir($imageLocation) || !file_exists($imageLocation))
+				$room->front_image = 'front-default.jpg';
+		}
+		
 		$this->render('index',array('list'=>$list,'rooms'=>$rooms));
 	}
 

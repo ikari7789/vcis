@@ -82,7 +82,7 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 		count = 1;
 		$('#list li').each(function() {
 			body += count+'%0D';
-			$(this).find('div').each(function() {
+			$(this).find('div.info').each(function() {
 				body += $(this).text()
 				if ($(this).has('a').length)
 					body += ' - http://'+document.location.hostname+$(this).find('a').attr('href');
@@ -97,7 +97,7 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 
 <div class="content-header">
 	<h1>Room List</h1>
-	<div class="information">Click and drag to reorder items.</div>
+	<div class="information">Click and drag to reorder items. Press "X" to remove the item from the list.</div>
 </div>
 
 <ol id="list">
@@ -121,9 +121,9 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 						array('class'=>'fancy')
 					); ?>
 				</div>
-				<div class="room">Room: <?php echo CHtml::link($room->number, array('room/view','id'=>$room->id)); ?></div>
-				<div class="building">Building: <?php echo $room->floor->building->name; ?></div>
-				<div class="floor">Floor: <?php echo $room->floor->level; ?></div>
+				<div class="room info">Room: <?php echo CHtml::link($room->number, array('room/view','id'=>$room->id)); ?></div>
+				<div class="building info">Building: <?php echo $room->floor->building->name; ?></div>
+				<div class="floor info">Floor: <?php echo $room->floor->level; ?></div>
 			</li>
 		<?php endforeach; ?>
 	<?php endif; ?>
@@ -132,4 +132,5 @@ $this->widget('application.extensions.fancybox.EFancyBox', array(
 	<?php echo CHtml::link('Email this list', '#', array('id'=>'email')); ?>
 	<?php echo CHtml::htmlButton('Clear List',array('class'=>'clear')); ?>
 </div>
-<span class="warning">Warning: This list is only temporary and will be deleted when you leave the site.</span>
+<span class="info">As a convenience to users, users can email this list to themselves or any other party that would like to see this list.</span>
+<span class="warning">Warning: This list is only temporary and will be deleted when you close your browser.</span>

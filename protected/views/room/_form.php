@@ -81,7 +81,11 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 	<div class="row" id="floor_row">
 		<?php echo $form->labelEx($model,'floor_id'); ?>
 		<?php if (!$model->isNewRecord): ?>
-			<?php echo $model->floor->level; ?>
+			<?php if ($model->floor->level == '0'): ?>
+				Basement
+			<?php else: ?>
+				<?php echo $model->floor->level; ?>
+			<?php endif; ?>
 		<?php else: ?>
 			<?php echo $form->dropDownList($model, 'floor_id', $floors, 
 				array('disabled'=>(count($floors) > 0 ? '' : 'disabled'),'empty'=>'--please select--',)); ?>
@@ -170,17 +174,22 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 			<h3><?php echo $category->name; ?></h3>
 			<?php foreach($category->features as $feature) { ?>
 				<div class="row">
-					<?php if (isset($roomFeatures[$feature->id])) {
-						$details = $roomFeatures[$feature->id]['details'];
-						$verified = $roomFeatures[$feature->id]['verified'];
-					} else {	
-						$details = '';
-						$verified = false;
-					}; ?>
+					<?php if (isset($roomFeatures[$feature->id])): ?>
+						<?php $details = $roomFeatures[$feature->id]['details']; ?>
+						<?php if ($roomFeatures[$feature->id]['verification_time'] != '0000-00-00 00:00:00'): ?>
+							<?php $verification_time = 'Last verified: '.$roomFeatures[$feature->id]['verification_time']; ?>
+						<?php else: ?>
+							<?php $verification_time = 'Unverified'; ?>
+						<?php endif; ?>
+					<?php else: ?>
+						<?php $details = ''; ?>
+						<?php $verification_time = 'Unverified'; ?>
+					<?php endif; ?>
 					<?php echo CHtml::label($feature->name, 'RoomFeature_'.$feature->id.'_name'); ?>
 					<?php echo CHtml::textField('RoomFeature['.$feature->id.'][details]', $details,array('size'=>20,'maxlength'=>45)); ?>
 					<?php echo CHtml::label('Update verification?', 'RoomFeature_'.$feature->id.'_verified', array('class'=>'verification')); ?>
 					<?php echo CHtml::checkbox('RoomFeature['.$feature->id.'][verified]', false); ?>
+					<span class="feature info"><?php echo $verification_time; ?></span>
 				</div>
 			<?php } ?>
 		<?php } ?>

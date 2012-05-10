@@ -111,7 +111,7 @@ $this->menu=array(
 				</ul>
 				<div class="time">
 					<?php if ($oldest[$categoryName] != 0): ?>
-						Oldest information from <span><?php echo date('l, F d, Y', $oldest[$categoryName]); ?></span>
+						Newest information as of <span><?php echo date('l, F d, Y', $oldest[$categoryName]); ?></span>
 					<?php else: ?>
 						Information unverified
 					<?php endif; ?>

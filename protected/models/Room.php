@@ -548,7 +548,8 @@ class Room extends ActiveRecordBase
 				return true;
 			}
 			$model->details = $details;
-			$model->verification_time = date( 'Y-m-d H:i:s', time());
+			if ($verified)
+				$model->verification_time = date( 'Y-m-d H:i:s', time());
 			$saveType = 'update';
 				
 		}
