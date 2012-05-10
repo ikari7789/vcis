@@ -14,6 +14,6 @@ $this->widget('zii.widgets.CMenu', array(
 		array('label'=>'Manage Feature Categories', 'url'=>array('category/admin'), 'visible'=>Yii::app()->user->checkAccess('manageCategory', Yii::app()->user->id)),
 		array('label'=>'Manage Features', 'url'=>array('feature/admin'), 'visible'=>Yii::app()->user->checkAccess('manageFeature', Yii::app()->user->id)),
 		array('label'=>'Manage Users', 'url'=>array('user/admin'), 'visible'=>Yii::app()->user->checkAccess('manageUser', Yii::app()->user->id)),
-		array('label'=>'Manage User Account', 'url'=>array('user/update', 'id'=>Yii::app()->user->id), 'visible'=>Yii::app()->user->checkAccess('updateOwnUser', Yii::app()->user->id))
+		array('label'=>'Manage User Account', 'url'=>array('user/update', 'id'=>Yii::app()->user->id), 'visible'=>(Yii::app()->user->id!=0 && Yii::app()->user->checkAccess('updateOwnUser', Yii::app()->user->id)))
 	)
 )); ?>

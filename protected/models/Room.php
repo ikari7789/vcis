@@ -28,7 +28,7 @@ class Room extends ActiveRecordBase
 	private $_oldValues = array();
 	public $building_name;
 	public $floor_level;
-	public $statuses = array(1=>'Online', 0=>'Offline');
+	public $status_text;
 	
 	/**
 	 * Returns the static model of the specified AR class.
@@ -72,7 +72,7 @@ class Room extends ActiveRecordBase
 			array('description','safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, building_name, floor_level, statuses, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
+			array('id, building_name, floor_level, status_text, number, front_image, back_image, map_image, status, description, floor_id, create_time, update_time, create_user_id, update_user_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -123,27 +123,39 @@ class Room extends ActiveRecordBase
 		// Warning: Please modify the following code to remove attributes that
 		// should not be searched.
 		$criteria=new CDbCriteria;
+
+		// sub query to retrieve the count of floors
+		$status_text_sql = "CASE t.status WHEN 0 THEN 'offline' WHEN 1 THEN 'online' END";
+		
+		// select
+		$criteria->select = array(
+			'*',
+			$status_text_sql." as status_text",
+		);
+		
+		// with
 		$criteria->with = array('floor', 'building');
 
 		//$criteria->compare('id',$this->id);
 		$criteria->compare('building.name',$this->building_name,true);
 		$criteria->compare('floor.level',$this->floor_level);
 		$criteria->compare('t.number',$this->number,true);
-		$criteria->compare('t.front_image',$this->front_image,true);
-		$criteria->compare('t.back_image',$this->back_image,true);
-		$criteria->compare('t.map_image',$this->map_image,true);
-		$criteria->compare('t.status',$this->status);
-		$criteria->compare('t.description',$this->description,true);
+		//$criteria->compare('t.front_image',$this->front_image,true);
+		//$criteria->compare('t.back_image',$this->back_image,true);
+		//$criteria->compare('t.map_image',$this->map_image,true);
+		$criteria->compare($status_text_sql,$this->status_text);
+		//$criteria->compare('t.description',$this->description,true);
 		$criteria->compare('t.create_time',$this->create_time,true);
 		$criteria->compare('t.update_time',$this->update_time,true);
-		$criteria->compare('t.create_user_id',$this->create_user_id);
-		$criteria->compare('t.update_user_id',$this->update_user_id);
+		//$criteria->compare('t.create_user_id',$this->create_user_id);
+		//$criteria->compare('t.update_user_id',$this->update_user_id);
 		
-		$criteria->order='building.name, floor.level, t.number';
+		//$criteria->order='building.name, floor.level, t.number';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
+				'defaultOrder'=>'building.name, t.number',
 				'attributes'=>array(
 					'building_name'=>array(
 						'asc'=>'building.name',
@@ -155,6 +167,11 @@ class Room extends ActiveRecordBase
 						'desc'=>'floor.level DESC',
 						'label'=>'Floor',
 					),
+					'status_text'=>array(
+						'asc'=>'status_text',
+						'desc'=>'status_text DESC',
+						'label'=>'Status',
+					),
 					'*',
 				),
 			),
@@ -165,10 +182,63 @@ class Room extends ActiveRecordBase
 	 * Save current record to temp variable to be able to rollback any changes.
 	 */
 	public function afterFind()
-	{
+	{		
 		$this->_oldValues = $this->attributes;
 		Yii::trace('Model backup created.','Building::afterFind');
+		
 		return parent::afterFind();
+	}
+
+	protected function beforeSave() {
+		Yii::trace('Begin','Room::beforeSave');
+		
+		// Define save directory
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
+		$uploadDir = $baseDir.'/images/floors/';
+		Yii::trace('Image save location: '.$uploadDir,'Room::beforeSave');
+		// if new map_image attempted to be uploaded
+		// backup old image
+		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
+			$oldFile = $uploadDir.$this->_oldValues['map_image'];
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+		}
+
+		// if new front_image attempted to be uploaded
+		// backup old image
+		if (is_object($this->front_image) && get_class($this->front_image)==='CUploadedFile') {
+			// front_image
+			$oldFile = $uploadDir.$this->_oldValues['front_image'];
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+			
+			// front_image_large
+			$oldFile = $uploadDir.substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+		}
+		
+		// if new back_image attempted to be uploaded
+		// backup old image
+		if (is_object($this->back_image) && get_class($this->back_image)==='CUploadedFile') {
+			// back_image
+			$oldFile = $uploadDir.$this->_oldValues['back_image'];
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+			
+			// back_image_large
+			$oldFile = $uploadDir.substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+		}
+
+		return parent::beforeSave();
 	}
 	
 	public function afterSave() {
@@ -194,97 +264,150 @@ class Room extends ActiveRecordBase
 
 		// Make sure the image is an uploaded image, otherwise leave image alone
 		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
-				Yii::trace('Map Image: CUploadedFile object found.','Room::afterSave');
+			Yii::trace('Map Image: CUploadedFile object found.','Room::afterSave');
+			
+			// Define filename
+			$newfname = $baseFname.'map.'.$this->map_image->extensionName;
+			Yii::trace('Map Image: New filename: '.$newfname,'Room::afterSave');
+			
+			Yii::trace('Map Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
+			// Save file
+			if ($this->map_image->saveAs($uploadDir.$newfname)) {
+				$this->map_image = $newfname;
 				
-				// Define filename
-				$newfname = $baseFname.'map.'.$this->map_image->extensionName;
-				Yii::trace('Map Image: New filename: '.$newfname,'Room::afterSave');
+				// resize image
+				$file = $uploadDir.$newfname;
+				$img = Yii::app()->simpleImage->load($file);
+				if ($img->getWidth() > 582)
+					$img->resizeToWidth(582);
+				$img->save($file);	
 				
-				Yii::trace('Map Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
-				// Save file
-				if ($this->map_image->saveAs($uploadDir.$newfname)) {
-					$this->map_image = $newfname;
-					
-					// resize image
-					$file = $uploadDir.$newfname;
-					$img = Yii::app()->simpleImage->load($file);
-					if ($img->getWidth() > 582)
-						$img->resizeToWidth(582);
-					$img->save($file);	
-					
-					$update = true;
-					Yii::trace('Map Image: File saved successfully.','Room::afterSave');
-				} else {
-					Yii::trace('Map Image: Error in saving file.','Room::afterSave');
-				}
+				$update = true;
+				Yii::trace('Map Image: File saved successfully.','Room::afterSave');
+
+				// delete backed up image if it exists
+				$imgBak = $this->_oldValues['map_image'].'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
+			} else {
+				Yii::trace('Map Image: Error in saving file.','Room::afterSave');
+				
+				// restore backed up image if it exists
+				$imgBak = $this->_oldValues['map_image'].'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+			}
 		}
 
 		// Check back image
 		if (is_object($this->back_image) && get_class($this->back_image)==='CUploadedFile') {
-				Yii::trace('Back Image: CUploadedFile object found.','Room::afterSave');
+			Yii::trace('Back Image: CUploadedFile object found.','Room::afterSave');
+			
+			// Define filename
+			$newfname = $baseFname.'back.'.$this->back_image->extensionName;
+			Yii::trace('Back Image: New filename: '.$newfname,'Room::afterSave');
+			
+			Yii::trace('Back Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
+			
+			// Save file
+			if ($this->back_image->saveAs($uploadDir.$newfname)) {
+				$fileExt = $this->back_image->extensionName;
+				$this->back_image = $newfname;
 				
-				// Define filename
-				$newfname = $baseFname.'back.'.$this->back_image->extensionName;
-				Yii::trace('Back Image: New filename: '.$newfname,'Room::afterSave');
+				// resize image
+				$file = $uploadDir.$newfname;
+				$img = Yii::app()->simpleImage->load($file);
+				// keep original image
+				$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
+				$img->save($filePath);
+				if ($img->getWidth() > 425)
+					$img->resizeToWidth(425);
+				$img->save($file);	
 				
-				Yii::trace('Back Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
+				$update = true;
+				Yii::trace('Back Image: File saved successfully.','Room::afterSave');
+			
+				// delete backed up back_image if it exists
+				$imgBak = $this->_oldValues['back_image'].'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
 				
-				// Save file
-				if ($this->back_image->saveAs($uploadDir.$newfname)) {
-					$fileExt = $this->back_image->extensionName;
-					$this->back_image = $newfname;
-					
-					// resize image
-					$file = $uploadDir.$newfname;
-					$img = Yii::app()->simpleImage->load($file);
-					// keep original image
-					$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
-					if (!is_dir($filePath) && file_exists($filePath))
-						unlink($filePath);
-					$img->save($filePath);
-					if ($img->getWidth() > 425)
-						$img->resizeToWidth(425);
-					$img->save($file);	
-					
-					$update = true;
-					Yii::trace('Back Image: File saved successfully.','Room::afterSave');
-				} else {
-					Yii::trace('Back Image: Error in saving file.','Room::afterSave');
-				}
+				// delete backed up back_image_large if it exists
+				$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
+			} else {
+				Yii::trace('Back Image: Error in saving file.','Room::afterSave');
+				
+				// restore backed up back_image if it exists
+				$imgBak = $this->_oldValues['back_image'].'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);	
+				
+				// restore backed up back_image_large if it exists
+				$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+			}
 		}
 
 		// Check front image
 		if (is_object($this->front_image) && get_class($this->front_image)==='CUploadedFile') {
-				Yii::trace('Front Image: CUploadedFile object found.','Room::afterSave');
+			Yii::trace('Front Image: CUploadedFile object found.','Room::afterSave');
+			
+			// Define filename
+			$newfname = $baseFname.'front.'.$this->front_image->extensionName;
+			Yii::trace('Front Image: New filename: '.$newfname,'Room::afterSave');
+			
+			Yii::trace('Front Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
+			
+			// Save file
+			if ($this->front_image->saveAs($uploadDir.$newfname)) {
+				$fileExt = $this->front_image->extensionName;
+				$this->front_image = $newfname;
 				
-				// Define filename
-				$newfname = $baseFname.'front.'.$this->front_image->extensionName;
-				Yii::trace('Front Image: New filename: '.$newfname,'Room::afterSave');
+				// resize image
+				$file = $uploadDir.$newfname;
+				$img = Yii::app()->simpleImage->load($file);
+				// keep original image
+				$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
+				if (!is_dir($filePath) && file_exists($filePath))
+					unlink($filePath);
+				$img->save($filePath);
+				if ($img->getWidth() > 425)
+					$img->resizeToWidth(425);
+				$img->save($file);
 				
-				Yii::trace('Front Image: Full filename + directory: '.$uploadDir.$newfname,'Room::afterSave');
+				$update = true;
+				Yii::trace('Front Image: File saved successfully.','Room::afterSave');
 				
-				// Save file
-				if ($this->front_image->saveAs($uploadDir.$newfname)) {
-					$fileExt = $this->front_image->extensionName;
-					$this->front_image = $newfname;
-					
-					// resize image
-					$file = $uploadDir.$newfname;
-					$img = Yii::app()->simpleImage->load($file);
-					// keep original image
-					$filePath = $uploadDir.basename($file,'.'.$fileExt).'_large.'.$fileExt;
-					if (!is_dir($filePath) && file_exists($filePath))
-						unlink($filePath);
-					$img->save($filePath);
-					if ($img->getWidth() > 425)
-						$img->resizeToWidth(425);
-					$img->save($file);
-					
-					$update = true;
-					Yii::trace('Front Image: File saved successfully.','Room::afterSave');
-				} else {
-					Yii::trace('Front Image: Error in saving file.','Room::afterSave');	
-				}
+				// delete backed up front_image if it exists
+				$imgBak = $this->_oldValues['front_image'].'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
+				
+				// delete backed up front_image_large if it exists
+				$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
+			} else {
+				Yii::trace('Front Image: Error in saving file.','Room::afterSave');
+				
+				// restore backed up front_image if it exists
+				$imgBak = $this->_oldValues['front_image'].'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);	
+				
+				// restore backed up front_image_large if it exists
+				$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+			}
 		}
 
 		// Save new filename to record

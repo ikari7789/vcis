@@ -113,10 +113,12 @@ class Feature extends ActiveRecordBase
 		$criteria->compare('t.update_user_id',$this->update_user_id);
 		
 		$criteria->with = array('category');
-		$criteria->order='category.name, t.name';
-
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'category.name, t.name',
+			),
 		));
 	}
 	

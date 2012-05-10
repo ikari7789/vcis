@@ -76,10 +76,7 @@ $('.search-form form').submit(function(){
 			//'description',
 			'create_time',
 			'update_time',
-			array(
-				'name'=>'status',
-				'value'=>'($data->status == 0) ? "Offline" : "Online"',
-			),
+			'status_text',
 			array(
 				'class'=>'CButtonColumn',
 				'template'=>$template,

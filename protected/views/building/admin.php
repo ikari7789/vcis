@@ -60,8 +60,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		//'id',
 		'name',
+		'floor_count',
+		'room_count',
 		'map_image',
 		'create_time',
 		'update_time',

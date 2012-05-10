@@ -145,11 +145,12 @@ class User extends ActiveRecordBase
 		$criteria->compare('t.update_time',$this->update_time,true);
 		$criteria->compare('t.create_user_id',$this->create_user_id);
 		$criteria->compare('t.update_user_id',$this->update_user_id);
-		
-		$criteria->order='t.username';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultSort'=>'t.username',
+			),
 		));
 	}
 	

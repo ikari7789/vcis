@@ -110,7 +110,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 					)
 				);
 		?>
-		<?php echo $form->fileField($model,'front_image',array('size'=>60,'maxlength'=>256)); ?>
+		<?php echo $form->fileField($model,'front_image',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'front_image'); ?>
 	</div>
 
@@ -129,7 +129,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 					)
 				);
 		?>
-		<?php echo $form->fileField($model,'back_image',array('size'=>60,'maxlength'=>256)); ?>
+		<?php echo $form->fileField($model,'back_image',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'back_image'); ?>
 	</div>
 
@@ -148,7 +148,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 					)
 				);
 		?>
-		<?php echo $form->fileField($model,'map_image',array('size'=>60,'maxlength'=>256)); ?>
+		<?php echo $form->fileField($model,'map_image',array('size'=>60,'maxlength'=>255)); ?>
 		<?php echo $form->error($model,'map_image'); ?>
 	</div>
 
@@ -178,7 +178,7 @@ $imageUrl = Yii::app()->request->baseUrl.'/images/rooms/';
 						$verified = false;
 					}; ?>
 					<?php echo CHtml::label($feature->name, 'RoomFeature_'.$feature->id.'_name'); ?>
-					<?php echo CHtml::textField('RoomFeature['.$feature->id.'][details]', $details); ?>
+					<?php echo CHtml::textField('RoomFeature['.$feature->id.'][details]', $details,array('size'=>20,'maxlength'=>45)); ?>
 					<?php echo CHtml::label('Update verification?', 'RoomFeature_'.$feature->id.'_verified', array('class'=>'verification')); ?>
 					<?php echo CHtml::checkbox('RoomFeature['.$feature->id.'][verified]', false); ?>
 				</div>

@@ -77,6 +77,7 @@ class Floor extends ActiveRecordBase
 			'createUser' => array(self::BELONGS_TO, 'User', 'create_user_id'),
 			'updateUser' => array(self::BELONGS_TO, 'User', 'update_user_id'),
 			'rooms' => array(self::HAS_MANY, 'Room', 'floor_id'),
+			'roomCount' => array(self::STAT, 'Room', 'floor_id'),
 		);
 	}
 
@@ -122,46 +123,83 @@ class Floor extends ActiveRecordBase
 		));
 	}
 	
+	protected function beforeSave() {
+		Yii::trace('Begin','Floor::beforeSave');
+		
+		// Define save directory
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
+		$uploadDir = $baseDir.'/images/floors/';
+		Yii::trace('Image save location: '.$uploadDir,'Floor::beforeSave');
+		
+		// if new map_image attempted to be uploaded
+		// backup old image
+		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
+			$oldFile = $uploadDir.$this->_oldValues['map_image'];
+			$newFile = $oldFile.'.bak';
+			if (!is_dir($oldFile) && file_exists($oldFile))
+				rename($oldFile, $newFile);
+		}
+
+		return parent::beforeSave();
+	}
+	
 	protected function afterSave() {		
 		Yii::trace('Begin','Floor::afterSave');
 
+		// Define save directory
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$baseDir = $rootPath['dirname'];
+		$uploadDir = $baseDir.'/images/floors/';
+		Yii::trace('Image save location: '.$uploadDir,'Floor::afterSave');
+		$update = false;
+
 		// Make sure the image is an uploaded image, otherwise leave image alone
 		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
-				Yii::trace('CUploadedFile object found.','Floor::afterSave');
+			Yii::trace('Map Image: CUploadedFile object found.','Floor::afterSave');
+			
+			// Define filename
+			$newfname = $this->building_id.'_'.$this->id.'_map.'.$this->map_image->extensionName;
+			Yii::trace('Map Image: New filename: '.$newfname,'Floor::afterSave');
+			
+			Yii::trace('Map Image: Full filename + directory: '.$uploadDir.$newfname,'Floor::afterSave');
+			// Save file
+			if ($this->map_image->saveAs($uploadDir.$newfname)) {
+				$this->map_image = $newfname;
 				
-				// Define save directory
-				$rootPath = pathinfo(Yii::app()->request->scriptFile);
-				$baseDir = $rootPath['dirname'];
-				$uploadDir = $baseDir.'/images/floors/';
-				Yii::trace('Save location: '.$uploadDir,'Floor::afterSave');
+				// resize image
+				$file = $uploadDir.$newfname;
+				$img = Yii::app()->simpleImage->load($file);
+				if ($img->getWidth() > 582)
+					$img->resizeToWidth(582);
+				$img->save($file);	
 				
-				// Define filename
-				$newfname = $this->building_id.'_'.$this->id.'_map.'.$this->map_image->extensionName;
-				Yii::trace('New filename: '.$newfname,'Floor::afterSave');
+				$update = true;
+				Yii::trace('Map Image: File saved successfully.','Floor::afterSave');
 				
-				Yii::trace('Full filename + directory: '.$uploadDir.$newfname,'Floor::afterSave');
+				// delete backed up image if it exists
+				$imgBak = $this->_oldValues['map_image'].'.bak';
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					unlink($uploadDir.$imgBak);
+			} else {
+				Yii::trace('Map Image: Error in saving file.','Floor::afterSave');
 				
-				// Save file
-				if ($this->map_image->saveAs($uploadDir.$newfname)) {
-					Yii::trace('File saved successfully.','Floor::afterSave');
-					
-					// resize image
-					$file = $uploadDir.$newfname;
-					$img = Yii::app()->simpleImage->load($file);
-					if ($img->getWidth() > 582)
-						$img->resizeToWidth(582);
-					$img->save($file);					
-					
-					// Save new filename to record
-					$this->map_image = $newfname;
-					if ($this->isNewRecord)
-						$this->isNewRecord = false;
-					$this->update();
-				} else {
-					Yii::trace('Error in saving file.','Floor::afterSave');
-				}
+				// restore backed up image if it exists
+				$imgBak = $this->_oldValues['map_image'].'.bak';
+				$imgRestore = substr($imgBak, 0, -4);
+				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+			}
 		}
-		Yii::trace('End','Floor::afterSave');
+		
+		// Save new filename to record
+		if ($update) {
+			if ($this->isNewRecord)
+				$this->isNewRecord = false;
+			$this->update();
+		}
+		
+		Yii::trace('End','Floor::afterSave');;
 		return parent::afterSave();
 	}
 

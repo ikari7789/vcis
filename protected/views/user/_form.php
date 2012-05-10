@@ -11,7 +11,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'username'); ?>
-		<?php if (isset($model->username)): ?>
+		<?php if ($model->isNewRecord): ?>
 			<?php echo $model->username; ?>
 			<?php echo $form->hiddenField($model,'username'); ?>
 		<?php else: ?>
