@@ -199,7 +199,7 @@ class Room extends ActiveRecordBase
 		Yii::trace('Image save location: '.$uploadDir,'Room::beforeSave');
 		// if new map_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['map_image']) && is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
 			$oldFile = $uploadDir.$this->_oldValues['map_image'];
 			$newFile = $oldFile.'.bak';
 			if (!is_dir($oldFile) && file_exists($oldFile))
@@ -208,7 +208,7 @@ class Room extends ActiveRecordBase
 
 		// if new front_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->front_image) && get_class($this->front_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['front_image']) && is_object($this->front_image) && get_class($this->front_image)==='CUploadedFile') {
 			// front_image
 			$oldFile = $uploadDir.$this->_oldValues['front_image'];
 			$newFile = $oldFile.'.bak';
@@ -224,7 +224,7 @@ class Room extends ActiveRecordBase
 		
 		// if new back_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->back_image) && get_class($this->back_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['back_image']) && is_object($this->back_image) && get_class($this->back_image)==='CUploadedFile') {
 			// back_image
 			$oldFile = $uploadDir.$this->_oldValues['back_image'];
 			$newFile = $oldFile.'.bak';
@@ -284,19 +284,23 @@ class Room extends ActiveRecordBase
 				
 				$update = true;
 				Yii::trace('Map Image: File saved successfully.','Room::afterSave');
-
-				// delete backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				
+				if (isset($this->_oldValues['map_image'])) {
+					// delete backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Map Image: Error in saving file.','Room::afterSave');
 				
-				// restore backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['map_image'])) {
+					// restore backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 
@@ -328,29 +332,33 @@ class Room extends ActiveRecordBase
 				$update = true;
 				Yii::trace('Back Image: File saved successfully.','Room::afterSave');
 			
-				// delete backed up back_image if it exists
-				$imgBak = $this->_oldValues['back_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
-				
-				// delete backed up back_image_large if it exists
-				$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				if (isset($this->_oldValues['back_image'])) {
+					// delete backed up back_image if it exists
+					$imgBak = $this->_oldValues['back_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+					
+					// delete backed up back_image_large if it exists
+					$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Back Image: Error in saving file.','Room::afterSave');
 				
-				// restore backed up back_image if it exists
-				$imgBak = $this->_oldValues['back_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);	
-				
-				// restore backed up back_image_large if it exists
-				$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['back_image'])) {
+					// restore backed up back_image if it exists
+					$imgBak = $this->_oldValues['back_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);	
+					
+					// restore backed up back_image_large if it exists
+					$imgBak = substr($this->_oldValues['back_image'],0,-4).'_large'.substr($this->_oldValues['back_image'],-4).'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 
@@ -384,29 +392,33 @@ class Room extends ActiveRecordBase
 				$update = true;
 				Yii::trace('Front Image: File saved successfully.','Room::afterSave');
 				
-				// delete backed up front_image if it exists
-				$imgBak = $this->_oldValues['front_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
-				
-				// delete backed up front_image_large if it exists
-				$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				if (isset($this->_oldValues['front_image'])) {
+					// delete backed up front_image if it exists
+					$imgBak = $this->_oldValues['front_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+					
+					// delete backed up front_image_large if it exists
+					$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Front Image: Error in saving file.','Room::afterSave');
 				
-				// restore backed up front_image if it exists
-				$imgBak = $this->_oldValues['front_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);	
-				
-				// restore backed up front_image_large if it exists
-				$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['front_image'])) {
+					// restore backed up front_image if it exists
+					$imgBak = $this->_oldValues['front_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+					
+					// restore backed up front_image_large if it exists
+					$imgBak = substr($this->_oldValues['front_image'],0,-4).'_large'.substr($this->_oldValues['front_image'],-4).'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 

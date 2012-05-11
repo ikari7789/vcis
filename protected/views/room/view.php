@@ -1,5 +1,8 @@
 <?php
-$this->pageTitle=$model->number.' | Floor '.$model->floor->level.' | '.$model->floor->building->name.' | '.Yii::app()->name;
+if ($model->floor->level == 0)
+	$this->pageTitle=$model->number.' | Basement | '.$model->floor->building->name.' | '.Yii::app()->name;
+else
+	$this->pageTitle=$model->number.' | Floor '.$model->floor->level.' | '.$model->floor->building->name.' | '.Yii::app()->name;
 
 $this->breadcrumbs=array(
 	$model->floor->building->name=>array('building/view','id'=>$model->floor->building->id),

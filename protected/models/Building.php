@@ -176,7 +176,7 @@ class Building extends ActiveRecordBase
 		
 		// if new map_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['map_image']) && is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
 			$oldFile = $uploadDir.$this->_oldValues['map_image'];
 			$newFile = $oldFile.'.bak';
 			if (!is_dir($oldFile) && file_exists($oldFile))
@@ -185,7 +185,7 @@ class Building extends ActiveRecordBase
 
 		// if new street_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->street_image) && get_class($this->street_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['steet_image']) && is_object($this->street_image) && get_class($this->street_image)==='CUploadedFile') {
 			$oldFile = $uploadDir.$this->_oldValues['street_image'];
 			$newFile = $oldFile.'.bak';
 			if (!is_dir($oldFile) && file_exists($oldFile))
@@ -228,18 +228,22 @@ class Building extends ActiveRecordBase
 				$update = true;
 				Yii::trace('Map Image: File saved successfully.','Building::afterSave');
 				
-				// delete backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				if (isset($this->_oldValues['map_image'])) {
+					// delete backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Map Image: Error in saving file.','Building::afterSave');
 				
-				// restore backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['map_image'])) {
+					// restore backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 		
@@ -268,18 +272,22 @@ class Building extends ActiveRecordBase
 				$update = true;
 				Yii::trace('Back Image: File saved successfully.','Building::afterSave');
 				
-				// delete backed up image if it exists
-				$imgBak = $this->_oldValues['street_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				if (isset($this->_oldValues['street_image'])) {
+					// delete backed up image if it exists
+					$imgBak = $this->_oldValues['street_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Back Image: Error in saving file.','Building::afterSave');
 				
-				// restore backed up image if it exists
-				$imgBak = $this->_oldValues['street_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['street_image'])) {
+					// restore backed up image if it exists
+					$imgBak = $this->_oldValues['street_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 		

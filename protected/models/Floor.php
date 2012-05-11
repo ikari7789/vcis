@@ -134,7 +134,7 @@ class Floor extends ActiveRecordBase
 		
 		// if new map_image attempted to be uploaded
 		// backup old image
-		if (is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
+		if (isset($this->_oldValues['map_image']) && is_object($this->map_image) && get_class($this->map_image)==='CUploadedFile') {
 			$oldFile = $uploadDir.$this->_oldValues['map_image'];
 			$newFile = $oldFile.'.bak';
 			if (!is_dir($oldFile) && file_exists($oldFile))
@@ -177,18 +177,22 @@ class Floor extends ActiveRecordBase
 				$update = true;
 				Yii::trace('Map Image: File saved successfully.','Floor::afterSave');
 				
-				// delete backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					unlink($uploadDir.$imgBak);
+				if (isset($this->_oldValues['map_image'])) {
+					// delete backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						unlink($uploadDir.$imgBak);
+				}
 			} else {
 				Yii::trace('Map Image: Error in saving file.','Floor::afterSave');
 				
-				// restore backed up image if it exists
-				$imgBak = $this->_oldValues['map_image'].'.bak';
-				$imgRestore = substr($imgBak, 0, -4);
-				if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
-					rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				if (isset($this->_oldValues['map_image'])) {
+					// restore backed up image if it exists
+					$imgBak = $this->_oldValues['map_image'].'.bak';
+					$imgRestore = substr($imgBak, 0, -4);
+					if (!is_dir($uploadDir.$imgBak) && file_exists($uploadDir.$imgBak))
+						rename($uploadDir.$imgBak, $uploadDir.$imgRestore);
+				}
 			}
 		}
 		
