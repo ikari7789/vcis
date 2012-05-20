@@ -392,6 +392,40 @@ img.map-image, img.street-image, img.floor-image, img.room-image {
 img.front-image, img.back-image {
     width: 424px;
 }
+
 span.feature.info {
     margin-left: 15px;
+}
+
+.adv-search .category {
+    background: #501D82;
+    padding: 5px;
+    width: 180px;
+}
+
+.adv-search .category .title {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.adv-search .feature {
+    background: #dacfe5;
+    padding: 5px;
+    width: auto;
+}
+
+.adv-search .feature .title {
+    color: black;
+    font-size: 14px;
+}
+
+.adv-search .detail {
+    background: white;
+    color: black;
+    /* display: none; */
+    font-size: 12px;
+    font-weight: normal;
+    padding: 5px;
+    width: auto;
 }

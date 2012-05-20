@@ -6,10 +6,35 @@ require_once('Zend/Search/Lucene.php');
 class SearchController extends Controller
 {
 	private $_indexFiles = '/runtime/search';
+	const CHECKBOX_SEARCH = 0;
+	const NUMERIC_SEARCH = 1;
+	
 	
 	public function actionIndex()
 	{
-		$this->render('index');
+		$categoryModels = Category::model()->findAll();
+
+		$advancedSearchOptions = array();
+		foreach ($categoryModels as $categoryModel) {
+			foreach ($categoryModel->features as $featureModel) {
+				$advancedSearchOptions[$categoryModel->name][$featureModel->name]['searchType'] = self::NUMERIC_SEARCH;
+				$advancedSearchOptions[$categoryModel->name][$featureModel->name]['feature_id'] = $featureModel->id;
+				foreach ($featureModel->featureDetails as $featureDetailsModel) {
+					$advancedSearchOptions[$categoryModel->name][$featureModel->name]['details'][$featureDetailsModel->details] = $featureDetailsModel->details;
+					
+					if (!is_numeric($featureDetailsModel->details))
+						$advancedSearchOptions[$categoryModel->name][$featureModel->name]['searchType'] = self::CHECKBOX_SEARCH;
+				}
+				if (empty($advancedSearchOptions[$categoryModel->name][$featureModel->name]['details']))
+					unset($advancedSearchOptions[$categoryModel->name][$featureModel->name]);
+			}
+			if (empty($advancedSearchOptions[$categoryModel->name][$featureModel->name]))
+				unset($advancedSearchOptions[$categoryModel->name]);
+		}
+		if (!empty($advancedSearchOptions))
+			natcasesort($advancedSearchOptions);
+		
+		$this->render('index',array('advancedSearchOptions'=>$advancedSearchOptions));
 	}
 
 	public function actionCreate()
@@ -40,9 +65,13 @@ class SearchController extends Controller
 			$featureDetails = '';
 			foreach ($room->room_features as $roomFeature)
 			{
-				$doc->addField(Zend_Search_Lucene_Field::text(
-					str_replace(' ', '_', strtolower($roomFeature->feature->name)),
-					$roomFeature->feature->name.' '.$roomFeature->details)
+				$doc->addField(
+					Zend_Search_Lucene_Field::text(
+						//str_replace(' ', '_', strtolower($roomFeature->feature->name)),
+						str_replace(array('"','(',')',' '), array('','','','_') ,$roomFeature->feature->name),
+						//$roomFeature->feature->name.' '.$roomFeature->details)
+						$roomFeature->details
+					)
 				);
 			}
 			/*$doc->addField(Zend_Search_Lucene_Field::text('feature_names', $featureNames));
@@ -59,17 +88,29 @@ class SearchController extends Controller
 
 	public function actionSearch()
 	{
-		if (isset($_GET['terms']))
+		if (isset($_GET['terms']) || isset($_GET['advanced_search']))
 		{
 			$rootPath = pathinfo(Yii::app()->request->scriptFile);
 			$index = new Zend_Search_Lucene($rootPath['dirname'].$this->_indexFiles);
-			$results = $index->find($_GET['terms']);
+			if ($_GET['advanced_search'] == 1 && !isset($_GET['terms']))
+			{
+				// get results for advanced search
+				foreach($_GET as $searchTerm => $values) {
+					if (!preg_match('/(yt)|(advanced_search)/', $searchTerm)) {
+						echo $searchTerm."\n";
+						print_r($values);
+						echo "\n";
+					}
+				}
+			}
+			else
+			{
+				$results = $index->find($_GET['terms']);
+			}
 			$this->render('search', array('results' => $results));
 		}
 		else
-		{
 			$this->render('index');
-		}
 	}
 	
 	public function actionUpdate()
