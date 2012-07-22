@@ -1,7 +1,7 @@
 <?php
 
 // uncomment the following to define a path alias
-Yii::setPathOfAlias('siteDir','/home/vcis/vcis');
+//Yii::setPathOfAlias('siteDir','');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
@@ -47,12 +47,14 @@ return array(
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-			'showScriptName'=>false,
+			'showScriptName'=>true,
 			'rules'=>array(
 				''=>'site/index',
 				'<action:(login|logout)>'=>'site/<action>',
+				'(building|buildings)'=>'site/index',
 				'admin'=>'admin/index',
 				'list'=>'list/index',
+				'search'=>'search/search',
 				'<view:(help)>'=>'site/page',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
@@ -64,10 +66,10 @@ return array(
 		//),
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=registrar_vcis',
+			'connectionString' => 'mysql:host=mysql.standingmist.com;dbname=standingmist_vcis',
 			'emulatePrepare' => true,
-			'username' => 'registrar_vcis',
-			'password' => 'QRqnD84LJW3tdpvN',
+			'username' => 'vcis',
+			'password' => 'mcssad2',
 			'charset' => 'utf8',
 		),
 		'errorHandler'=>array(
@@ -94,6 +96,6 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'milleraw07@uww.edu',
+		'adminEmail'=>'registrar@uww.edu',
 	),
 );

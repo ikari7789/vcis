@@ -66,10 +66,10 @@ return array(
 		//),
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=mysql.standingmist.com;dbname=standingmist_vcis',
+			'connectionString' => 'mysql:host=phosphorus.uww.edu;dbname=registrar_vcis',
 			'emulatePrepare' => true,
-			'username' => 'vcis',
-			'password' => 'mcssad2',
+			'username' => 'registrar_vcis',
+			'password' => 'QRqnD84LJW3tdpvN',
 			'charset' => 'utf8',
 		),
 		'errorHandler'=>array(
