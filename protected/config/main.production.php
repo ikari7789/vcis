@@ -66,7 +66,7 @@ return array(
 		//),
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=phosphorus.uww.edu;dbname=registrar_vcis',
+			'connectionString' => 'mysql:host=localhost;dbname=registrar_vcis',
 			'emulatePrepare' => true,
 			'username' => 'registrar_vcis',
 			'password' => 'QRqnD84LJW3tdpvN',
@@ -84,10 +84,10 @@ return array(
 					'levels'=>'',//'error, warning',
 				),
 				// uncomment the following to show log messages on web pages
-				array(
-					'class'=>'CWebLogRoute',
-					'showInFireBug'=>true,
-				),
+				//array(
+					//'class'=>'CWebLogRoute',
+					//'showInFireBug'=>true,
+				//),
 			),
 		),
 	),
