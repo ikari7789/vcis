@@ -186,6 +186,15 @@ class Room extends ActiveRecordBase
 		$this->_oldValues = $this->attributes;
 		Yii::trace('Model backup created.','Building::afterFind');
 		
+		$rootPath = pathinfo(Yii::app()->request->scriptFile);
+		$imageLocation = $rootPath['dirname'].'/images/rooms/'.$this->front_image;
+		if (is_dir($imageLocation) || !file_exists($imageLocation))
+			$this->front_image = 'front-default.jpg';
+				
+		$imageLocation = $rootPath['dirname'].'/images/rooms/'.$this->back_image;
+		if (is_dir($imageLocation) || !file_exists($imageLocation))
+			$this->back_image = 'back-default.jpg';
+		
 		return parent::afterFind();
 	}
 

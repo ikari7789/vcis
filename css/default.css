@@ -397,6 +397,11 @@ span.feature.info {
     margin-left: 15px;
 }
 
+.adv-search {
+	float: left;
+	padding-top: 6px;
+}
+
 .adv-search .category {
     background: #501D82;
     padding: 5px;
@@ -423,9 +428,57 @@ span.feature.info {
 .adv-search .detail {
     background: white;
     color: black;
-    /* display: none; */
+    display: none;
     font-size: 12px;
     font-weight: normal;
     padding: 5px;
     width: auto;
+}
+
+#searchResults {
+	display: inline-block;
+	float: left;
+	margin-top: -28px;
+	padding-left: 25px;
+	width: 620px;
+}
+
+.search-result {
+	display: block;
+	margin-bottom: 10px;
+	padding: 0;
+	text-align: left;
+	width: 100%;
+}
+
+.search-result:last-child {
+	margin-bottom: 0;
+}
+
+.search-result .image {
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+}
+
+.search-result .image a {
+	display: inline-block;
+}
+
+.search-result .list-image {
+	float: none;
+    margin-right: 10px;
+    vertical-align: bottom;
+    width: 100px;
+}
+
+.search-result .info {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.search-result .room.info,
+.search-result .floor.info,
+.search-result .building.info {
+	display: block;
 }

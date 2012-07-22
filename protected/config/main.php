@@ -54,6 +54,7 @@ return array(
 				'(building|buildings)'=>'site/index',
 				'admin'=>'admin/index',
 				'list'=>'list/index',
+				'search'=>'search/search',
 				'<view:(help)>'=>'site/page',
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
@@ -65,7 +66,7 @@ return array(
 		//),
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=standingmist_vcis',
+			'connectionString' => 'mysql:host=mysql.standingmist.com;dbname=standingmist_vcis',
 			'emulatePrepare' => true,
 			'username' => 'vcis',
 			'password' => 'mcssad2',

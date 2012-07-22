@@ -5,12 +5,29 @@ $(document).ready(function() {
 		
 		rangeVals.each(function() {
 			if ($(this).val() == '') {
-				var searchElement;
-				$(this);
+				$(this).attr('disabled','disabled');
 			}
 		});
-			
-		alert($(this).serialize());
-		return false;
 	});
+	
+	$('.title').toggle(
+		function() {
+	  		$(this).addClass('highlight');
+	  		var menuItem = $(this).parent('.feature');
+	  		menuItem.find('.detail').animate({
+	  			opacity: 1,
+				height: 'toggle'
+			}, 500);
+	  		$(this).find('span').html('-');
+	  	},
+  		function() {
+  			$(this).removeClass('highlight');
+  			var menuItem = $(this).parent('.feature');
+  			menuItem.find('.detail').animate({
+  				opacity: 0,
+				height: 'toggle'
+			}, 500);
+  			$(this).find('span').html('+');
+  		}
+	);
 });

@@ -11,7 +11,13 @@ class SearchController extends Controller
 	
 	
 	public function actionIndex()
-	{
+	{		
+		$this->render('index',array(
+			'advancedSearchOptions'=>$this->getAdvancedSearchOptions(),
+		));
+	}
+
+	private function getAdvancedSearchOptions() {
 		$categoryModels = Category::model()->findAll();
 
 		$advancedSearchOptions = array();
@@ -22,120 +28,119 @@ class SearchController extends Controller
 				foreach ($featureModel->featureDetails as $featureDetailsModel) {
 					$advancedSearchOptions[$categoryModel->name][$featureModel->name]['details'][$featureDetailsModel->details] = $featureDetailsModel->details;
 					
+					// Check if search type is non-numeric
 					if (!is_numeric($featureDetailsModel->details))
 						$advancedSearchOptions[$categoryModel->name][$featureModel->name]['searchType'] = self::CHECKBOX_SEARCH;
 				}
+				
+				// Remove any empty details
 				if (empty($advancedSearchOptions[$categoryModel->name][$featureModel->name]['details']))
 					unset($advancedSearchOptions[$categoryModel->name][$featureModel->name]);
 			}
+			
+			// Remove any empty features
 			if (empty($advancedSearchOptions[$categoryModel->name][$featureModel->name]))
 				unset($advancedSearchOptions[$categoryModel->name]);
 		}
+
+		// Remove search options if nothing to search on
 		if (!empty($advancedSearchOptions))
 			natcasesort($advancedSearchOptions);
 		
-		$this->render('index',array('advancedSearchOptions'=>$advancedSearchOptions));
-	}
-
-	public function actionCreate()
-	{
-		$rootPath = pathinfo(Yii::app()->request->scriptFile);
-		$index = Zend_Search_Lucene::create($rootPath['dirname'].$this->_indexFiles);
-		
-		Zend_Search_Lucene_Analysis_Analyzer::setDefault(
-			new Search_Analyzer()
-		);
-		
-		// Add documents to the database.
-		$rooms = Room::model()->findAll();
-		$indexedRooms = '';
-		foreach ($rooms as $room)
-		{
-			$doc = new Zend_Search_Lucene_Document();
-			$url = CController::createAbsoluteUrl('room/view', array('id'=>$room->id));
-			$doc->addField(Zend_Search_Lucene_Field::unIndexed('link', $url));
-			$doc->addField(Zend_Search_Lucene_Field::unStored('id', $room->id));
-			$doc->addField(Zend_Search_Lucene_Field::text('room_number', $room->number));
-			$doc->addField(Zend_Search_Lucene_Field::text('room_status', ($room->status == 0) ? 'in operation':'out of operation'));
-			$doc->addField(Zend_Search_Lucene_Field::text('room_description', $room->description));
-			$doc->addField(Zend_Search_Lucene_Field::keyword('floor_level', 'floor '.$room->floor->level));
-			$doc->addField(Zend_Search_Lucene_Field::text('building_name', $room->building->name));
-			
-			$featureNames = '';
-			$featureDetails = '';
-			foreach ($room->room_features as $roomFeature)
-			{
-				$doc->addField(
-					Zend_Search_Lucene_Field::text(
-						//str_replace(' ', '_', strtolower($roomFeature->feature->name)),
-						str_replace(array('"','(',')',' '), array('','','','_') ,$roomFeature->feature->name),
-						//$roomFeature->feature->name.' '.$roomFeature->details)
-						$roomFeature->details
-					)
-				);
-			}
-			/*$doc->addField(Zend_Search_Lucene_Field::text('feature_names', $featureNames));
-			$doc->addField(Zend_Search_Lucene_Field::text('feature_details', $featureDetails));*/
-		
-			$index->addDocument($doc);
-			$indexedRooms .= '<li>'.$room->building->name.' - Floor '.$room->floor->level.' - '.$room->number.'</li>';
-		}
-
-		$index->optimize();
-		$index->commit();
-		$this->render('create', array('indexedRooms'=>$indexedRooms));
+		return $advancedSearchOptions;
 	}
 
 	public function actionSearch()
 	{
-		if (isset($_GET['terms']) || isset($_GET['advanced_search']))
+		if (isset($_GET['type']) && $_GET['type'] == 'advanced')
 		{
-			$rootPath = pathinfo(Yii::app()->request->scriptFile);
-			$index = new Zend_Search_Lucene($rootPath['dirname'].$this->_indexFiles);
-			if ($_GET['advanced_search'] == 1 && !isset($_GET['terms']))
-			{
-				// get results for advanced search
-				foreach($_GET as $searchTerm => $values) {
-					if (!preg_match('/(yt)|(advanced_search)/', $searchTerm)) {
-						echo $searchTerm."\n";
-						print_r($values);
-						echo "\n";
-					}
-				}
-			}
-			else
-			{
-				$results = $index->find($_GET['terms']);
-			}
-			$this->render('search', array('results' => $results));
+			$this->render('search', array(
+				'advancedSearchOptions'=>$this->getAdvancedSearchOptions(),
+				'results' => $this->searchByUser($_GET)
+			));
 		}
 		else
-			$this->render('index');
+			$this->run('index');
 	}
 	
-	public function actionUpdate()
-	{
-		$rootPath = pathinfo(Yii::app()->request->scriptFile);
-		$removePath = $rootPath['dirname'].$this->_indexFiles;
-		$this->actionCreate();
+	private function searchByUser($parameters) {
+		$criteria = new CDbCriteria;
+
+		// select
+		$criteria->select = array('*', );
+		
+		// with
+		$criteria->with = array('room');
+
+		$tmpLow = Array();
+		$tmpHigh = Array();
+
+		if (isset($parameters['type'])) {
+			unset($parameters['type']);
+		}
+
+		foreach ($parameters as $key => $value) {
+			// look for low value in range
+			if (preg_match('/._low/', $key)) {
+				$tmpLow[substr($key, 0, strpos($key, '_'))] = $value;
+			// look for high value in range
+			} else if (preg_match('/._high/', $key)) {
+				$tmpHigh[substr($key, 0, strpos($key, '_'))] = $value;
+			// all other values
+			} else {
+				$feature = Feature::model()->findByPk($key);
+				if ($feature) {
+					$search .= ' AND (t.feature_id = '.$feature->id.' AND (';
+					//$criteria->addSearchCondition('t.feature_id', $feature->id);
+					foreach ($value as $searchTerm) {
+						$subSearch .= ' OR t.details LIKE "'.$searchTerm.'"';
+						//$criteria->addSearchCondition('t.details', $searchTerm);
+					}
+					$subSearch = substr($subSearch, 4, strlen($subSearch));
+					$search .= $subSearch.'))';
+				}
+			}
+		}
+
+		// Go through each of the low values
+		foreach ($tmpLow as $key => $value) {
+			$search .= ' AND (t.feature_id = '.$key.' AND (t.details > '.$tmpLow[$key];
+			// if upper range found, limit search between the lower and upper
+			if ($tmpHigh[$key]) {
+				$search .= ' AND t.details < '.$tmpHigh[$key].'))';
+				//$criteria->addBetweenCondition('t.details', $tmpLow[$key], $tmpHigh[$key]);
+				// delete upper range value from tempHigh
+				unset($tmpHigh[$key]);
+			} else {
+				// if no upper range, find all values higher than lower cutoff
+				$search .= ' AND t.details < '.PHP_INT_MAX.'))';
+				//$criteria->addBetweenCondition('t.details', $tmpLow[$key], PHP_INT_MAX);
+			}
+			unset($tmpLow[$key]);
+		}
+
+		// Get under for any leftover upper ranges
+		foreach ($tmpHigh as $key => $value) {
+			$search .= ' AND (t.feature_id = '.$key.' AND (t.details > 0 AND t.details < '.$tmpHigh[$key].'))';
+			//$criteria->addBetweenCondition('t.details', 0, $tmpHigh[$key]);
+		}
+
+		$search = substr($search, 5, strlen($search));
+		$criteria->condition = $search;
+
+		return new CActiveDataProvider('RoomFeature',
+			array(
+				'criteria'=>$criteria,
+				'pagination'=>array(
+					'pageSize'=>10,
+				),
+				'sort'=>array(
+					'defaultOrder'=>'room.number',
+					'attributes'=>array(
+						'*',
+					),
+				),
+			)
+		);
 	}
-	
-	/**
-     * Delete a file or recursively delete a directory
-     *
-     * @param string $str Path to file or directory
-     */
-    private function recursiveDelete($str) 
-    {
-        if(is_file($str)){
-            return @unlink($str);
-        }
-        elseif(is_dir($str)){
-            $scan = glob(rtrim($str,'/').'/*');
-            foreach($scan as $index=>$path){
-                $this->recursiveDelete($path);
-            }
-            return @rmdir($str);
-        }
-    }
 }
