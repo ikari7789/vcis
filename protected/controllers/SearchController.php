@@ -44,8 +44,11 @@ class SearchController extends Controller
 		}
 
 		// Remove search options if nothing to search on
-		if (!empty($advancedSearchOptions))
-			natcasesort($advancedSearchOptions);
+		//die(print_r($advancedSearchOptions));
+		if (!empty($advancedSearchOptions)) {
+			//natcasesort($advancedSearchOptions);
+			ksort($advancedSearchOptions);
+		}
 		
 		return $advancedSearchOptions;
 	}
@@ -71,6 +74,10 @@ class SearchController extends Controller
 		
 		// with
 		$criteria->with = array('room');
+		
+		// where
+		$search = '';
+		$subSearch = '';
 
 		$tmpLow = Array();
 		$tmpHigh = Array();

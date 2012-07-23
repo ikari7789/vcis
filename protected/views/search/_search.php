@@ -1,6 +1,6 @@
 <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl.'/js/search.js', CClientScript::POS_HEAD); ?>
 
-<?php echo CHtml::form(Yii::app()->request->baseUrl.'/search','GET', array('id'=>'advanced_search')); ?>
+<?php echo CHtml::form(array('search/search'),'GET', array('id'=>'advanced_search')); ?>
 	<div class="adv-search">
 		<?php foreach ($advancedSearchOptions as $category => $features): ?>
 			<div class="category">
